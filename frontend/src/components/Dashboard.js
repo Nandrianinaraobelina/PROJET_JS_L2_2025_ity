@@ -4,7 +4,7 @@ import { getProducts } from '../services/productService';
 import { getVendors } from '../services/vendorService';
 import { getSales } from '../services/saleService';
 import { getPurchases } from '../services/purchaseService';
-import { Bar, Pie, Line } from 'react-chartjs-2';
+import { Bar, Line, Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -85,51 +85,74 @@ function Dashboard() {
   const genreData = Object.values(genres);
 
   return (
-    <div className="section-card fade-in">
-      <h2 className="section-title"><i className="bi bi-speedometer2 me-2"></i>Tableau de bord</h2>
+    <div className="section-card-modern fade-in">
+      <h2 className="section-title-modern">
+        <i className="bi bi-speedometer2" style={{marginRight: '0.5rem'}}></i>
+        Tableau de bord
+      </h2>
       <div className="row text-center mb-4 justify-content-center">
-        <div className="col-6 col-md-3 mb-2">
-          <div className="card shadow-sm border-0">
-            <div className="card-body py-3 px-2">
-              <i className="bi bi-people fs-3 text-primary"></i>
-              <h6 className="mt-2 mb-1">Clients</h6>
-              <span className="badge bg-primary fs-6">{stats.clients}</span>
+        <div className="col-6 col-md-3 mb-4">
+          <div className="data-card-modern">
+            <div className="data-header-modern">
+              <div>
+                <div className="data-title-modern">Clients</div>
+                <div className="data-subtitle-modern">Total enregistré</div>
+              </div>
+              <div className="data-icon-modern">
+                <i className="bi bi-people"></i>
+              </div>
             </div>
+            <div className="data-value-modern">{stats.clients}</div>
           </div>
         </div>
-        <div className="col-6 col-md-3 mb-2">
-          <div className="card shadow-sm border-0">
-            <div className="card-body py-3 px-2">
-              <i className="bi bi-film fs-3 text-info"></i>
-              <h6 className="mt-2 mb-1">Films</h6>
-              <span className="badge bg-info fs-6">{stats.films}</span>
+        <div className="col-6 col-md-3 mb-4">
+          <div className="data-card-modern">
+            <div className="data-header-modern">
+              <div>
+                <div className="data-title-modern">Films</div>
+                <div className="data-subtitle-modern">En stock</div>
+              </div>
+              <div className="data-icon-modern">
+                <i className="bi bi-film"></i>
+              </div>
             </div>
+            <div className="data-value-modern">{stats.films}</div>
           </div>
         </div>
-        <div className="col-6 col-md-3 mb-2">
-          <div className="card shadow-sm border-0">
-            <div className="card-body py-3 px-2">
-              <i className="bi bi-person-badge fs-3 text-success"></i>
-              <h6 className="mt-2 mb-1">Vendeurs</h6>
-              <span className="badge bg-success fs-6">{stats.vendeurs}</span>
+        <div className="col-6 col-md-3 mb-4">
+          <div className="data-card-modern">
+            <div className="data-header-modern">
+              <div>
+                <div className="data-title-modern">Vendeurs</div>
+                <div className="data-subtitle-modern">Actifs</div>
+              </div>
+              <div className="data-icon-modern">
+                <i className="bi bi-person-badge"></i>
+              </div>
             </div>
+            <div className="data-value-modern">{stats.vendeurs}</div>
           </div>
         </div>
-        <div className="col-6 col-md-3 mb-2">
-          <div className="card shadow-sm border-0">
-            <div className="card-body py-3 px-2">
-              <i className="bi bi-ticket-perforated fs-3 text-warning"></i>
-              <h6 className="mt-2 mb-1">Total films vendus</h6>
-              <span className="badge bg-warning text-dark fs-6">{totalFilmsVendus}</span>
+        <div className="col-6 col-md-3 mb-4">
+          <div className="data-card-modern">
+            <div className="data-header-modern">
+              <div>
+                <div className="data-title-modern">Films vendus</div>
+                <div className="data-subtitle-modern">Ce mois</div>
+              </div>
+              <div className="data-icon-modern">
+                <i className="bi bi-ticket-perforated"></i>
+              </div>
             </div>
+            <div className="data-value-modern">{totalFilmsVendus}</div>
           </div>
         </div>
       </div>
       <div className="row g-3 justify-content-center">
         {genreLabels.length > 0 && (
           <div className="col-12 col-md-6 col-lg-4">
-            <div className="card p-2 mb-2">
-              <h6 className="mb-2">Répartition des films par genre</h6>
+            <div className="section-card-modern">
+              <h6 className="section-title-modern" style={{fontSize: '1.2rem', marginBottom: '1.5rem'}}>Répartition des films par genre</h6>
               <Bar
                 data={{
                   labels: genreLabels,
@@ -137,7 +160,11 @@ function Dashboard() {
                     {
                       label: 'Nombre de films',
                       data: genreData,
-                      backgroundColor: '#0d6efd',
+                      backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      borderColor: '#667eea',
+                      borderWidth: 1,
+                      borderRadius: 6,
+                      borderSkipped: false,
                     },
                   ],
                 }}
@@ -146,6 +173,19 @@ function Dashboard() {
                   plugins: {
                     legend: { display: false },
                     title: { display: false },
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      grid: {
+                        color: 'rgba(0,0,0,0.05)',
+                      },
+                    },
+                    x: {
+                      grid: {
+                        color: 'rgba(0,0,0,0.05)',
+                      },
+                    },
                   },
                 }}
                 height={140}
@@ -155,8 +195,8 @@ function Dashboard() {
         )}
         {evoVentes.labels.length > 0 && (
           <div className="col-12 col-md-6 col-lg-4">
-            <div className="card p-2 mb-2">
-              <h6 className="mb-2">Évolution des ventes par mois</h6>
+            <div className="section-card-modern">
+              <h6 className="section-title-modern" style={{fontSize: '1.2rem', marginBottom: '1.5rem'}}>Évolution des ventes par mois</h6>
               <Line
                 data={{
                   labels: evoVentes.labels,
@@ -164,10 +204,15 @@ function Dashboard() {
                     {
                       label: 'Ventes',
                       data: evoVentes.data,
-                      borderColor: '#198754',
-                      backgroundColor: 'rgba(25,135,84,0.2)',
-                      tension: 0.3,
+                      borderColor: '#667eea',
+                      backgroundColor: 'rgba(102,126,234,0.1)',
+                      tension: 0.4,
                       fill: true,
+                      pointBackgroundColor: '#667eea',
+                      pointBorderColor: '#fff',
+                      pointBorderWidth: 2,
+                      pointRadius: 6,
+                      pointHoverRadius: 8,
                     },
                   ],
                 }}
@@ -177,6 +222,19 @@ function Dashboard() {
                     legend: { display: false },
                     title: { display: false },
                   },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      grid: {
+                        color: 'rgba(0,0,0,0.05)',
+                      },
+                    },
+                    x: {
+                      grid: {
+                        color: 'rgba(0,0,0,0.05)',
+                      },
+                    },
+                  },
                 }}
                 height={140}
               />
@@ -185,8 +243,8 @@ function Dashboard() {
         )}
         {topVendeurs.length > 0 && (
           <div className="col-12 col-md-6 col-lg-4">
-            <div className="card p-2 mb-2">
-              <h6 className="mb-2">Top vendeurs</h6>
+            <div className="section-card-modern">
+              <h6 className="section-title-modern" style={{fontSize: '1.2rem', marginBottom: '1.5rem'}}>Top vendeurs</h6>
               <Bar
                 data={{
                   labels: topVendeurs.map(v => v.nom),
@@ -194,7 +252,11 @@ function Dashboard() {
                     {
                       label: 'Ventes',
                       data: topVendeurs.map(v => v.count),
-                      backgroundColor: '#ffc107',
+                      backgroundColor: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                      borderColor: '#f093fb',
+                      borderWidth: 1,
+                      borderRadius: 6,
+                      borderSkipped: false,
                     },
                   ],
                 }}
@@ -202,6 +264,72 @@ function Dashboard() {
                   responsive: true,
                   plugins: {
                     legend: { display: false },
+                    title: { display: false },
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      grid: {
+                        color: 'rgba(0,0,0,0.05)',
+                      },
+                    },
+                    x: {
+                      grid: {
+                        color: 'rgba(0,0,0,0.05)',
+                      },
+                    },
+                  },
+                }}
+                height={140}
+              />
+            </div>
+          </div>
+        )}
+        {repartitionFilms.labels.length > 0 && (
+          <div className="col-12 col-md-6 col-lg-4">
+            <div className="section-card-modern">
+              <h6 className="section-title-modern" style={{fontSize: '1.2rem', marginBottom: '1.5rem'}}>Répartition des ventes par film</h6>
+              <Pie
+                data={{
+                  labels: repartitionFilms.labels,
+                  datasets: [
+                    {
+                      label: 'Ventes',
+                      data: repartitionFilms.data,
+                      backgroundColor: [
+                        'rgba(102, 126, 234, 0.8)',
+                        'rgba(240, 147, 251, 0.8)',
+                        'rgba(79, 172, 254, 0.8)',
+                        'rgba(67, 233, 123, 0.8)',
+                        'rgba(245, 87, 108, 0.8)',
+                        'rgba(251, 191, 36, 0.8)',
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(139, 92, 246, 0.8)',
+                      ],
+                      borderColor: [
+                        'rgba(102, 126, 234, 1)',
+                        'rgba(240, 147, 251, 1)',
+                        'rgba(79, 172, 254, 1)',
+                        'rgba(67, 233, 123, 1)',
+                        'rgba(245, 87, 108, 1)',
+                        'rgba(251, 191, 36, 1)',
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(139, 92, 246, 1)',
+                      ],
+                      borderWidth: 2,
+                    },
+                  ],
+                }}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: {
+                      position: 'bottom',
+                      labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                      },
+                    },
                     title: { display: false },
                   },
                 }}

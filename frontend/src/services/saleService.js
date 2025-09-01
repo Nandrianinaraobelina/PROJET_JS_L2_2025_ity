@@ -3,11 +3,7 @@ import { getToken } from './authService';
 const API_URL = 'http://localhost:5000/api/ventes';
 
 export async function getSales() {
-  const response = await fetch(API_URL, {
-    headers: {
-      'Authorization': 'Bearer ' + getToken(),
-    },
-  });
+  const response = await fetch(API_URL);
   if (!response.ok) throw new Error('Erreur lors de la récupération des ventes');
   return response.json();
 }
@@ -17,7 +13,6 @@ export async function addSale(sale) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + getToken(),
     },
     body: JSON.stringify(sale),
   });
@@ -33,7 +28,6 @@ export async function updateSale(id, sale) {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + getToken(),
     },
     body: JSON.stringify(sale),
   });
@@ -47,9 +41,6 @@ export async function updateSale(id, sale) {
 export async function deleteSale(id) {
   const response = await fetch(`${API_URL}/${id}`, {
     method: 'DELETE',
-    headers: {
-      'Authorization': 'Bearer ' + getToken(),
-    },
   });
   if (!response.ok) throw new Error('Erreur lors de la suppression de la vente');
   return response.json();

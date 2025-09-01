@@ -151,124 +151,414 @@ function Products() {
   const paginatedProducts = filteredProducts.slice((currentPage-1)*itemsPerPage, currentPage*itemsPerPage);
 
   return (
-    <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="section-title"><i className="bi bi-film me-2"></i>Gestion des films <span className="badge bg-primary">{products.length}</span></h2>
+    <div className="section-card-modern fade-in">
+      <div className="d-flex justify-content-between align-items-center mb-6" style={{marginBottom: '2rem'}}>
+        <h2 className="section-title-modern">
+          <i className="bi bi-film" style={{marginRight: '0.5rem'}}></i>
+          Gestion des Produits
+          <span className="badge bg-primary" style={{marginLeft: '1rem', fontSize: '0.8rem'}}>{products.length}</span>
+        </h2>
+        <div className="search-container-modern" style={{maxWidth: '300px', marginBottom: '0'}}>
         <input
           type="text"
-          className="form-control w-auto"
-          placeholder="Recherche..."
+            className="search-input-modern"
+            placeholder="Rechercher un produit..."
           value={search}
           onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
-          style={{ minWidth: 180 }}
         />
+          <div className="search-icon-modern">
+            <i className="bi bi-search"></i>
+          </div>
+        </div>
       </div>
-      <form className="row g-3 mb-4 fade-in" onSubmit={handleSubmit}>
+
+      {/* Formulaire d'ajout/modification */}
+      <form className="row g-3 mb-6 fade-in" style={{marginBottom: '2rem'}} onSubmit={handleSubmit}>
         <div className="col-md-3">
-          <input type="text" className="form-control" name="Titre" placeholder="Titre" value={form.Titre} onChange={handleChange} required />
+          <div className="form-group-modern">
+            <label className="form-label-modern">Titre</label>
+            <input
+              type="text"
+              className="form-input-modern"
+              name="Titre"
+              placeholder="Titre du film"
+              value={form.Titre}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
         <div className="col-md-3">
-          <input type="text" className="form-control" name="Realisateur" placeholder="Réalisateur" value={form.Realisateur} onChange={handleChange} />
+          <div className="form-group-modern">
+            <label className="form-label-modern">Réalisateur</label>
+            <input
+              type="text"
+              className="form-input-modern"
+              name="Realisateur"
+              placeholder="Nom du réalisateur"
+              value={form.Realisateur}
+              onChange={handleChange}
+            />
+          </div>
         </div>
         <div className="col-md-2">
-          <input type="date" className="form-control" name="DateSortie" placeholder="Date de sortie" value={form.DateSortie} onChange={handleChange} />
+          <div className="form-group-modern">
+            <label className="form-label-modern">Date de sortie</label>
+            <input
+              type="date"
+              className="form-input-modern"
+              name="DateSortie"
+              value={form.DateSortie}
+              onChange={handleChange}
+            />
+          </div>
         </div>
         <div className="col-md-2">
-          <input type="number" className="form-control" name="Duree" placeholder="Durée (min)" value={form.Duree} onChange={handleChange} />
+          <div className="form-group-modern">
+            <label className="form-label-modern">Durée</label>
+            <input
+              type="number"
+              className="form-input-modern"
+              name="Duree"
+              placeholder="120"
+              value={form.Duree}
+              onChange={handleChange}
+            />
+          </div>
         </div>
         <div className="col-md-2">
-          <input type="number" className="form-control" name="Prix_unitaire" placeholder="Prix (ARIARY)" value={form.Prix_unitaire} onChange={handleChange} required />
+          <div className="form-group-modern">
+            <label className="form-label-modern">Prix</label>
+            <input
+              type="number"
+              className="form-input-modern"
+              name="Prix_unitaire"
+              placeholder="50000"
+              value={form.Prix_unitaire}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
         <div className="col-md-3">
-          <input type="text" className="form-control" name="Genre" placeholder="Genre" value={form.Genre} onChange={handleChange} />
+          <div className="form-group-modern">
+            <label className="form-label-modern">Genre</label>
+            <input
+              type="text"
+              className="form-input-modern"
+              name="Genre"
+              placeholder="Action, Comédie..."
+              value={form.Genre}
+              onChange={handleChange}
+            />
+          </div>
         </div>
         <div className="col-md-3">
-          <input type="text" className="form-control" name="Langue" placeholder="Langue" value={form.Langue} onChange={handleChange} />
+          <div className="form-group-modern">
+            <label className="form-label-modern">Langue</label>
+            <input
+              type="text"
+              className="form-input-modern"
+              name="Langue"
+              placeholder="Français"
+              value={form.Langue}
+              onChange={handleChange}
+            />
+          </div>
         </div>
         <div className="col-md-3">
-          <input type="text" className="form-control" name="PaysOrigine" placeholder="Pays d'origine" value={form.PaysOrigine} onChange={handleChange} />
+          <div className="form-group-modern">
+            <label className="form-label-modern">Pays d'origine</label>
+            <input
+              type="text"
+              className="form-input-modern"
+              name="PaysOrigine"
+              placeholder="France"
+              value={form.PaysOrigine}
+              onChange={handleChange}
+            />
+          </div>
         </div>
         <div className="col-md-3">
-          <input type="text" className="form-control" name="ActeursPrincipaux" placeholder="Acteurs principaux" value={form.ActeursPrincipaux} onChange={handleChange} />
+          <div className="form-group-modern">
+            <label className="form-label-modern">Acteurs principaux</label>
+            <input
+              type="text"
+              className="form-input-modern"
+              name="ActeursPrincipaux"
+              placeholder="Acteur 1, Acteur 2..."
+              value={form.ActeursPrincipaux}
+              onChange={handleChange}
+            />
+          </div>
         </div>
         <div className="col-md-3">
-          <input type="file" className="form-control" name="Photo" accept="image/*" onChange={e => {
+          <div className="form-group-modern">
+            <label className="form-label-modern">Photo (optionnel)</label>
+            <input
+              type="file"
+              className="form-input-modern"
+              name="Photo"
+              accept="image/*"
+              onChange={e => {
   const file = e.target.files[0];
   if (file) {
     setForm({ ...form, Photo: file });
   }
-}} />
+              }}
+              style={{padding: '0.5rem'}}
+            />
+          </div>
         </div>
         <div className="col-12">
-          <button type="submit" className="btn btn-success me-2" disabled={formLoading}>
-            {formLoading ? (editId ? 'Modification...' : 'Ajout...') : (editId ? 'Modifier' : 'Ajouter film')}
-          </button>
-          {editId && <button type="button" className="btn btn-secondary" onClick={handleCancelEdit}>Annuler</button>}
+          <div className="d-flex gap-3">
+                        <button
+              type="submit"
+              className={`btn-success-modern flex-fill ${formLoading ? 'btn-loading' : ''}`}
+              disabled={formLoading}
+              style={{maxWidth: '200px'}}
+            >
+              {formLoading ? (
+                <>
+                  <div className="spinner-modern" style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}}></div>
+                  {editId ? 'Modification...' : 'Ajout...'}
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-film" style={{marginRight: '0.5rem'}}></i>
+                  {editId ? 'Modifier le film' : 'Ajouter le film'}
+                </>
+              )}
+            </button>
+            {editId && (
+              <button
+                type="button"
+                className="btn-ghost-modern"
+                onClick={handleCancelEdit}
+                style={{maxWidth: '120px'}}
+              >
+                <i className="bi bi-x-circle" style={{marginRight: '0.5rem'}}></i>
+                Annuler
+              </button>
+            )}
+          </div>
+          {formError && (
+            <div className="mt-3 p-3 border-radius-lg" style={{
+              background: 'var(--error-50)',
+              border: '1px solid var(--error-200)',
+              color: 'var(--error-700)'
+            }}>
+              <div className="d-flex align-items-center">
+                <i className="bi bi-exclamation-triangle me-2"></i>
+                <span>{formError}</span>
+              </div>
+            </div>
+          )}
         </div>
-        {formError && <div className="alert alert-danger mt-2">{formError}</div>}
       </form>
       {loading ? (
-        <div>Chargement...</div>
+        <div className="d-flex align-items-center justify-content-center p-6">
+          <div className="spinner-modern me-3"></div>
+          <span className="text-muted">Chargement des produits...</span>
+        </div>
       ) : error ? (
-        <div className="alert alert-danger">{error}</div>
-      ) : (
-        <>
-          <table className="table table-bordered fade-in">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Titre</th>
-                <th>Réalisateur</th>
-                <th>Date sortie</th>
-                <th>Durée</th>
-                <th>Prix (ARIARY)</th>
-                <th>Genre</th>
-                <th>Langue</th>
-                <th>Pays</th>
-                <th>Acteurs</th>
-                <th>Photo</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedProducts.map((prod) => (
-                <tr key={prod.ID_PROD}>
-                  <td>{prod.ID_PROD}</td>
-                  <td>{prod.Titre}</td>
-                  <td>{prod.Realisateur}</td>
-                  <td>{prod.DateSortie ? prod.DateSortie.substring(0, 10) : ''}</td>
-                  <td>{prod.Duree}</td>
-                  <td>{prod.Prix_unitaire}</td>
-                  <td>{prod.Genre}</td>
-                  <td>{prod.Langue}</td>
-                  <td>{prod.PaysOrigine}</td>
-                  <td>{prod.ActeursPrincipaux}</td>
-                  <td>
-                    {prod.Photo && (
-                      <img
-                        src={prod.Photo.startsWith('http') ? prod.Photo : `/photos/films/${prod.Photo}`}
-                        alt="Affiche"
-                        width={60}
-                        className="rounded shadow-sm"
-                      />
-                    )}
-                  </td>
-                  <td>
-                    <div className="d-flex gap-2">
-  <button className="btn prod-btn-edit" onClick={() => handleEdit(prod)}><i className="bi bi-pencil"></i> Modifier</button>
-  <button className="btn prod-btn-del" onClick={() => handleDelete(prod.ID_PROD)}><i className="bi bi-trash"></i> Supprimer</button>
-</div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="d-flex justify-content-center align-items-center mt-2">
-            <button className="btn btn-outline-primary btn-sm me-2" disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage-1)}>Précédent</button>
-            <span>Page {currentPage} / {totalPages || 1}</span>
-            <button className="btn btn-outline-primary btn-sm ms-2" disabled={currentPage === totalPages || totalPages === 0} onClick={() => setCurrentPage(currentPage+1)}>Suivant</button>
+        <div className="p-4 border-radius-lg" style={{
+          background: 'var(--error-50)',
+          border: '1px solid var(--error-200)',
+          color: 'var(--error-700)'
+        }}>
+          <div className="d-flex align-items-center">
+            <i className="bi bi-exclamation-triangle me-3" style={{fontSize: '1.5rem'}}></i>
+            <div>
+              <div className="font-semibold">Erreur de chargement</div>
+              <div>{error}</div>
+            </div>
           </div>
-        </>
+        </div>
+      ) : (
+        <React.Fragment>
+          {/* Table moderne des produits */}
+          <div className="section-card-modern fade-in" style={{padding: '0', marginTop: '2rem'}}>
+            <div className="p-4 border-bottom" style={{borderColor: 'var(--neutral-200) !important'}}>
+              <h6 className="font-semibold mb-0" style={{color: 'var(--neutral-700)'}}>
+                Liste des produits ({paginatedProducts.length} sur {filteredProducts.length})
+              </h6>
+            </div>
+
+            {/* En-têtes de la table */}
+            <div className="d-none d-md-flex p-3 border-bottom" style={{
+              background: 'var(--neutral-50)',
+              borderColor: 'var(--neutral-200) !important',
+              fontWeight: '600',
+              fontSize: '0.875rem',
+              color: 'var(--neutral-600)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              <div className="col-1">ID</div>
+              <div className="col-2">Titre</div>
+              <div className="col-2">Réalisateur</div>
+              <div className="col-1">Année</div>
+              <div className="col-1">Durée</div>
+              <div className="col-1">Prix</div>
+              <div className="col-2">Genre</div>
+              <div className="col-2 text-center">Actions</div>
+            </div>
+
+            {/* Corps de la table moderne */}
+            <div className="p-0">
+              {paginatedProducts.length === 0 ? (
+                <div className="text-center p-6">
+                  <i className="bi bi-film" style={{fontSize: '3rem', color: 'var(--neutral-400)'}}></i>
+                  <div className="mt-3 text-muted">Aucun produit trouvé</div>
+                  <div className="text-sm text-muted mt-1">
+                    {search ? 'Essayez de modifier votre recherche' : 'Commencez par ajouter un produit'}
+                  </div>
+                </div>
+              ) : (
+                paginatedProducts.map((prod, index) => (
+                  <div
+                    key={prod.ID_PROD}
+                    className={`d-flex align-items-center p-3 border-bottom hover-lift ${index % 2 === 0 ? '' : ''}`}
+                    style={{
+                      borderColor: 'var(--neutral-200) !important',
+                      transition: 'all var(--duration-normal) var(--easing)',
+                      background: index % 2 === 0 ? 'transparent' : 'var(--neutral-50)'
+                    }}
+                  >
+                    {/* Version mobile - Carte */}
+                    <div className="d-md-none w-100">
+                      <div className="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                          <div className="font-semibold text-primary">{prod.Titre}</div>
+                          <div className="text-sm text-muted">
+                            {prod.Realisateur && `Par ${prod.Realisateur}`}
+                            {prod.DateSortie && ` • ${prod.DateSortie.substring(0, 4)}`}
+                          </div>
+                          <div className="text-sm font-semibold" style={{color: 'var(--success-600)'}}>
+                            {prod.Prix_unitaire} ARIARY
+                          </div>
+                        </div>
+                        <div className="d-flex gap-1">
+                          <button
+                            className="btn-icon-modern btn-bounce"
+                            onClick={() => handleEdit(prod)}
+                            title="Modifier"
+                            style={{background: 'var(--warning-50)', color: 'var(--warning-600)', borderColor: 'var(--warning-200)'}}
+                          >
+                            <i className="bi bi-pencil"></i>
+                          </button>
+                          <button
+                            className="btn-icon-modern btn-bounce"
+                            onClick={() => handleDelete(prod.ID_PROD)}
+                            title="Supprimer"
+                            style={{background: 'var(--error-50)', color: 'var(--error-600)', borderColor: 'var(--error-200)'}}
+                          >
+                            <i className="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div className="text-sm text-muted">
+                        {prod.Genre && (
+                          <div className="mb-1">
+                            <i className="bi bi-tag me-2"></i>
+                            {prod.Genre}
+                          </div>
+                        )}
+                        {prod.Duree && (
+                          <div>
+                            <i className="bi bi-clock me-2"></i>
+                            {prod.Duree} min
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Version desktop - Ligne de table */}
+                    <div className="d-none d-md-flex w-100 align-items-center">
+                      <div className="col-1 text-muted font-mono" style={{fontSize: '0.875rem'}}>
+                        #{prod.ID_PROD}
+                      </div>
+                      <div className="col-2">
+                        <div className="font-semibold">{prod.Titre}</div>
+                        {prod.Realisateur && (
+                          <div className="text-sm text-muted">{prod.Realisateur}</div>
+                        )}
+                      </div>
+                      <div className="col-2 text-sm">
+                        {prod.Realisateur || <span className="text-muted">—</span>}
+                      </div>
+                      <div className="col-1 text-sm">
+                        {prod.DateSortie ? prod.DateSortie.substring(0, 4) : <span className="text-muted">—</span>}
+                      </div>
+                      <div className="col-1 text-sm">
+                        {prod.Duree ? `${prod.Duree}min` : <span className="text-muted">—</span>}
+                      </div>
+                      <div className="col-1 font-semibold" style={{color: 'var(--success-600)'}}>
+                        {prod.Prix_unitaire}
+                      </div>
+                      <div className="col-2 text-sm">
+                        {prod.Genre || <span className="text-muted">—</span>}
+                      </div>
+                      <div className="col-2">
+                        <div className="d-flex gap-1 justify-content-center">
+                          <button
+                            className="btn-icon-modern btn-bounce"
+                            onClick={() => handleEdit(prod)}
+                            title="Modifier"
+                            style={{background: 'var(--warning-50)', color: 'var(--warning-600)', borderColor: 'var(--warning-200)'}}
+                          >
+                            <i className="bi bi-pencil"></i>
+                          </button>
+                          <button
+                            className="btn-icon-modern btn-bounce"
+                            onClick={() => handleDelete(prod.ID_PROD)}
+                            title="Supprimer"
+                            style={{background: 'var(--error-50)', color: 'var(--error-600)', borderColor: 'var(--error-200)'}}
+                          >
+                            <i className="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Pagination moderne */}
+          {filteredProducts.length > 0 && (
+            <div className="d-flex justify-content-center align-items-center mt-4">
+              <div className="d-flex align-items-center gap-3">
+                <button
+                  className="btn-icon-modern"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(currentPage-1)}
+                  title="Page précédente"
+                >
+                  <i className="bi bi-chevron-left"></i>
+                </button>
+                <span className="text-sm font-semibold px-3 py-2 border-radius-lg" style={{
+                  background: 'var(--neutral-100)',
+                  color: 'var(--neutral-700)',
+                  minWidth: '80px',
+                  textAlign: 'center'
+                }}>
+                  {currentPage} / {totalPages || 1}
+                </span>
+                <button
+                  className="btn-icon-modern"
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  onClick={() => setCurrentPage(currentPage+1)}
+                  title="Page suivante"
+                >
+                  <i className="bi bi-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          )}
+        </React.Fragment>
       )}
     </div>
   );

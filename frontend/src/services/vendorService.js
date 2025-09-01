@@ -3,13 +3,18 @@ import { getToken } from './authService';
 const API_URL = 'http://localhost:5000/api/vendeurs';
 
 export async function getVendors() {
-  const response = await fetch(API_URL, {
-    headers: {
-      'Authorization': 'Bearer ' + getToken(),
-    },
-  });
-  if (!response.ok) throw new Error('Erreur lors de la récupération des vendeurs');
-  return response.json();
+  console.log('🔍 getVendors() appelé - URL:', API_URL);
+  try {
+    const response = await fetch(API_URL);
+    console.log('📡 Réponse API vendeurs:', response.status, response.statusText);
+    if (!response.ok) throw new Error('Erreur lors de la récupération des vendeurs');
+    const data = await response.json();
+    console.log('✅ Données vendeurs reçues:', data.length, 'éléments');
+    return data;
+  } catch (error) {
+    console.error('❌ Erreur dans getVendors():', error);
+    throw error;
+  }
 }
 
 export async function addVendor(vendor) {
@@ -17,7 +22,6 @@ export async function addVendor(vendor) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + getToken(),
     },
     body: JSON.stringify(vendor),
   });
@@ -33,7 +37,6 @@ export async function updateVendor(id, vendor) {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + getToken(),
     },
     body: JSON.stringify(vendor),
   });
@@ -47,9 +50,6 @@ export async function updateVendor(id, vendor) {
 export async function deleteVendor(id) {
   const response = await fetch(`${API_URL}/${id}`, {
     method: 'DELETE',
-    headers: {
-      'Authorization': 'Bearer ' + getToken(),
-    },
   });
   if (!response.ok) throw new Error('Erreur lors de la suppression du vendeur');
   return response.json();
