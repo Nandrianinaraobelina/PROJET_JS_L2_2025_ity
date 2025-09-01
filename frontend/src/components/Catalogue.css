@@ -407,9 +407,9 @@
 
 /* ==================== STYLES DES BOUTONS MODERNES ==================== */
 
-/* Boutons d'actions principaux */
+/* Boutons d'actions principaux - BLEU UNIFORME */
 .btn-primary-modern {
-  background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   border: none;
   border-radius: var(--radius-lg);
@@ -447,11 +447,11 @@
   transform: none;
 }
 
-/* Boutons secondaires - PLUS VISIBLES */
+/* Boutons secondaires - BLEU UNIFORME */
 .btn-secondary-modern {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--neutral-800);
-  border: 2px solid var(--neutral-300);
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  color: white;
+  border: none;
   border-radius: var(--radius-lg);
   padding: 0.75rem 1.5rem;
   font-size: 0.9rem;
@@ -465,29 +465,25 @@
   transition: all var(--duration-normal) var(--easing);
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(10px);
   min-height: 44px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.25);
 }
 
 .btn-secondary-modern:hover {
-  background: rgba(255, 255, 255, 0.35);
-  border-color: var(--primary-400);
-  color: var(--primary-700);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   transform: translateY(-2px);
-  box-shadow:
-    0 8px 16px -4px rgba(0, 0, 0, 0.12),
-    0 4px 8px -2px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 16px -4px rgba(59, 130, 246, 0.4);
+  filter: brightness(1.05);
 }
 
 .btn-secondary-modern:active {
   transform: translateY(0);
-  background: rgba(255, 255, 255, 0.15);
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
 }
 
-/* Boutons de succès */
+/* Boutons de succès - BLEU UNIFORME */
 .btn-success-modern {
-  background: linear-gradient(135deg, var(--success-500), var(--success-600));
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   border: none;
   border-radius: var(--radius-lg);
@@ -509,14 +505,15 @@
 }
 
 .btn-success-modern:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
-  filter: brightness(1.1);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+  filter: brightness(1.05);
 }
 
-/* Boutons d'erreur/danger */
+/* Boutons d'erreur/danger - BLEU UNIFORME */
 .btn-danger-modern {
-  background: linear-gradient(135deg, var(--error-500), var(--error-600));
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   border: none;
   border-radius: var(--radius-lg);
@@ -538,16 +535,17 @@
 }
 
 .btn-danger-modern:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
-  filter: brightness(1.1);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+  filter: brightness(1.05);
 }
 
 /* Boutons d'icônes (petits boutons ronds) - PLUS VISIBLES */
 .btn-icon-modern {
-  background: rgba(255, 255, 255, 0.3);
-  color: var(--neutral-700);
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  border: none;
   border-radius: 50%;
   width: 44px;
   height: 44px;
@@ -556,14 +554,10 @@
   justify-content: center;
   cursor: pointer;
   transition: all var(--duration-fast) var(--easing);
-  backdrop-filter: blur(8px);
   font-size: 1.1rem;
   position: relative;
   overflow: hidden;
-  box-shadow:
-    0 4px 8px -2px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 8px -2px rgba(59, 130, 246, 0.25);
 }
 
 .btn-icon-modern::before {
@@ -574,7 +568,7 @@
   width: 0;
   height: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
   transition: width 0.3s, height 0.3s, top 0.3s, left 0.3s;
   transform: translate(-50%, -50%);
 }
@@ -585,14 +579,10 @@
 }
 
 .btn-icon-modern:hover {
-  background: rgba(255, 255, 255, 0.5);
-  border-color: rgba(255, 255, 255, 0.7);
-  color: var(--neutral-900);
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
   transform: scale(1.08) translateY(-2px);
-  box-shadow:
-    0 8px 16px -4px rgba(0, 0, 0, 0.15),
-    0 4px 8px -2px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 16px -4px rgba(59, 130, 246, 0.4);
+  filter: brightness(1.05);
 }
 
 .btn-icon-modern:active {
@@ -608,11 +598,11 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* Boutons transparents (effet verre) - PLUS VISIBLES */
+/* Boutons transparents (effet verre) - BLEU UNIFORME */
 .btn-glass-modern {
-  background: rgba(255, 255, 255, 0.25);
-  color: var(--neutral-800);
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(29, 78, 216, 0.8));
+  color: white;
+  border: 2px solid rgba(59, 130, 246, 0.3);
   border-radius: var(--radius-lg);
   padding: 0.75rem 1.5rem;
   font-size: 0.9rem;
@@ -629,9 +619,8 @@
   backdrop-filter: blur(15px);
   min-height: 44px;
   box-shadow:
-    0 8px 16px -2px rgba(0, 0, 0, 0.1),
-    0 4px 8px -1px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 8px 16px -2px rgba(59, 130, 246, 0.25),
+    0 4px 8px -1px rgba(59, 130, 246, 0.15);
 }
 
 .btn-glass-modern::before {
@@ -644,7 +633,7 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.2),
     transparent
   );
   transition: left 0.5s;
@@ -655,21 +644,20 @@
 }
 
 .btn-glass-modern:hover {
-  background: rgba(255, 255, 255, 0.4);
-  border-color: rgba(255, 255, 255, 0.6);
-  color: var(--neutral-900);
+  background: linear-gradient(135deg, rgba(29, 78, 216, 0.9), rgba(30, 64, 175, 0.9));
+  border-color: rgba(59, 130, 246, 0.5);
   transform: translateY(-2px);
   box-shadow:
-    0 12px 32px -4px rgba(0, 0, 0, 0.15),
-    0 6px 12px -2px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    0 12px 32px -4px rgba(59, 130, 246, 0.4),
+    0 6px 12px -2px rgba(59, 130, 246, 0.3);
+  filter: brightness(1.05);
 }
 
 /* Boutons fantômes (outline seulement) */
 .btn-ghost-modern {
   background: transparent;
-  color: var(--primary-600);
-  border: 2px solid var(--primary-300);
+  color: #3b82f6;
+  border: 2px solid #3b82f6;
   border-radius: var(--radius-lg);
   padding: 0.75rem 1.5rem;
   font-size: 0.9rem;
@@ -687,11 +675,11 @@
 }
 
 .btn-ghost-modern:hover {
-  background: var(--primary-50);
-  border-color: var(--primary-400);
-  color: var(--primary-700);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(29, 78, 216, 0.1));
+  border-color: #1d4ed8;
+  color: #1d4ed8;
   transform: translateY(-1px);
-  box-shadow: var(--shadow-light);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
 }
 
 /* États de chargement */
@@ -2294,6 +2282,79 @@
   }
 }
 
+/* ==================== NOTIFICATION SUCCESS ==================== */
+
+.notification-success-modern .notification-content-modern {
+  background: linear-gradient(135deg, rgba(25, 135, 84, 0.95), rgba(40, 167, 69, 0.95));
+  border: 1px solid rgba(25, 135, 84, 0.5);
+  box-shadow: 0 8px 32px rgba(25, 135, 84, 0.3);
+}
+
+.notification-success-modern .notification-icon-modern {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  padding: 0.25rem;
+}
+
+/* ==================== NOTIFICATION INFO ==================== */
+
+.notification-info-modern .notification-content-modern {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(147, 197, 253, 0.95));
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+}
+
+.notification-info-modern .notification-icon-modern {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  padding: 0.25rem;
+}
+
+/* ==================== NOTIFICATION WARNING ==================== */
+
+.notification-warning-modern .notification-content-modern {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(251, 191, 36, 0.95));
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);
+}
+
+.notification-warning-modern .notification-icon-modern {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  padding: 0.25rem;
+}
+
+/* ==================== NOTIFICATION ERROR ==================== */
+
+.notification-error-modern .notification-content-modern {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.95));
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
+}
+
+.notification-error-modern .notification-icon-modern {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  padding: 0.25rem;
+}
+
+/* ==================== THÈME BLEU UNIFORME ==================== */
+
+/*
+  Tous les boutons de l'application utilisent maintenant un thème bleu uniforme :
+  - Couleur principale : #3b82f6 (bleu moyen)
+  - Couleur secondaire : #1d4ed8 (bleu foncé)
+  - Couleur tertiaire : #1e40af (bleu très foncé)
+  - Texte : Blanc (#ffffff)
+  - Dégradés : 135deg pour un effet moderne
+  - Animations : cubic-bezier(0.4, 0, 0.2, 1) pour fluidité
+  - Ombres : rgba(59, 130, 246, 0.3) pour cohérence
+*/
+
 /* ==================== FIN NOTIFICATION TOAST ==================== */
 
 /* ==================== ACHAT MULTIPLE ==================== */
@@ -2805,6 +2866,401 @@
 
 /* ==================== FIN PRÉVISUALISATION PANIER ==================== */
 
+/* ==================== CARTES DE FILMS AMÉLIORÉES ==================== */
+
+/* Conteneur d'image avec overlay */
+.product-image-container-modern {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+  background: linear-gradient(135deg, var(--neutral-100), var(--neutral-200));
+}
+
+.product-image-modern {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: brightness(0.95);
+}
+
+/* Overlay d'actions rapide */
+.product-overlay-modern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-card-modern:hover .product-overlay-modern {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.product-card-modern:hover .product-image-modern {
+  transform: scale(1.05);
+  filter: brightness(1.1) saturate(1.1);
+}
+
+/* Boutons overlay */
+.product-btn-overlay-modern {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.product-btn-preview-overlay-modern {
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  color: white;
+}
+
+.product-btn-preview-overlay-modern:hover {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.product-btn-cart-overlay-modern {
+  background: linear-gradient(135deg, var(--success-500), var(--success-600));
+  color: white;
+}
+
+.product-btn-cart-overlay-modern:hover {
+  background: linear-gradient(135deg, var(--success-600), var(--success-700));
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+}
+
+/* Contenu de la carte amélioré */
+.product-content-modern {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Header avec icône */
+.product-header-modern {
+  margin-bottom: 1rem;
+}
+
+.product-title-container-modern {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.product-title-icon-modern {
+  font-size: 1.1rem;
+  color: var(--primary-600);
+  margin-top: 0.1rem;
+  flex-shrink: 0;
+}
+
+.product-title-modern {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--neutral-800);
+  margin: 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Informations détaillées */
+.product-info-modern {
+  margin-bottom: 1rem;
+}
+
+.product-meta-modern {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.product-genre-modern,
+.product-director-modern {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--neutral-600);
+  background: var(--neutral-50);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  border: 1px solid var(--neutral-200);
+}
+
+.product-genre-modern i,
+.product-director-modern i {
+  font-size: 0.8rem;
+  color: var(--primary-500);
+}
+
+/* Prix stylisé */
+.product-price-section-modern {
+  margin-bottom: 1.5rem;
+}
+
+.product-price-modern {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--success-50), var(--success-100));
+  border: 2px solid var(--success-200);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  text-align: center;
+}
+
+.product-price-icon-modern {
+  font-size: 1.1rem;
+  color: var(--success-600);
+}
+
+.product-price-value-modern {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--success-700);
+  letter-spacing: -0.02em;
+}
+
+.product-price-currency-modern {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--success-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Bouton d'ajout rapide en bas de carte */
+.product-quick-add-modern {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--neutral-200);
+}
+
+.product-btn-quick-add-modern {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, var(--success-500), var(--success-600));
+  color: white;
+  border: 2px solid var(--success-500);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.product-btn-quick-add-modern:hover {
+  background: linear-gradient(135deg, var(--success-600), var(--success-700));
+  border-color: var(--success-600);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+}
+
+.product-btn-quick-add-modern:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.product-btn-quick-add-modern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.product-btn-quick-add-modern:hover::before {
+  left: 100%;
+}
+
+.quick-add-text-modern {
+  font-weight: 700;
+  white-space: nowrap;
+  flex: 1;
+  text-align: center;
+}
+
+.quick-add-arrow-modern {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.product-btn-quick-add-modern:hover .quick-add-arrow-modern {
+  transform: translateX(3px);
+}
+
+/* Responsive pour le bouton d'ajout rapide */
+@media (max-width: 768px) {
+  .product-btn-quick-add-modern {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .quick-add-text-modern {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-btn-quick-add-modern {
+    padding: 0.6rem 0.7rem;
+    font-size: 0.8rem;
+  }
+
+  .quick-add-text-modern {
+    font-size: 0.8rem;
+  }
+
+  .quick-add-arrow-modern {
+    font-size: 0.9rem;
+  }
+}
+
+/* Effets spéciaux */
+.product-card-modern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg,
+    var(--primary-500),
+    var(--success-500),
+    var(--warning-500),
+    var(--primary-500)
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+  border-radius: 16px 16px 0 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.product-card-modern:hover::before {
+  opacity: 1;
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .product-image-modern {
+    height: 240px;
+  }
+
+  .product-content-modern {
+    padding: 1.25rem;
+  }
+
+  .product-title-modern {
+    font-size: 1rem;
+  }
+
+  .product-price-modern {
+    padding: 0.6rem 0.8rem;
+  }
+
+  .product-price-value-modern {
+    font-size: 1.1rem;
+  }
+
+
+
+  .product-overlay-modern {
+    gap: 0.75rem;
+  }
+
+  .product-btn-overlay-modern {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-image-modern {
+    height: 200px;
+  }
+
+  .product-content-modern {
+    padding: 1rem;
+  }
+
+  .product-title-modern {
+    font-size: 0.95rem;
+  }
+
+  .product-meta-modern {
+    gap: 0.4rem;
+  }
+
+  .product-genre-modern,
+  .product-director-modern {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .product-price-value-modern {
+    font-size: 1rem;
+  }
+
+  .product-btn-overlay-modern {
+    width: 40px;
+    height: 40px;
+    font-size: 0.9rem;
+  }
+
+
+}
+
+/* ==================== FIN CARTES DE FILMS AMÉLIORÉES ==================== */
+
 /* BOUTONS ACHATS - DESIGN MODERNE MAGNIFIQUE */
 
 /* CATALOGUE */
@@ -3042,68 +3498,163 @@
 }
 
 .achat-btn-edit {
-  background: linear-gradient(90deg, #6366f1 0%, #38bdf8 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: #fff;
-  border-radius: 16px;
+  border-radius: 12px;
   border: none;
-  box-shadow: 0 2px 8px #6366f133;
-  transition: transform 0.13s, box-shadow 0.18s, background 0.18s;
-  font-size: 1.18rem;
-  padding: 0.45rem 0.85rem;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.9rem;
+  padding: 0.5rem 0.8rem;
   font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  min-width: 40px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.achat-btn-edit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
 }
 .achat-btn-edit:hover {
-  background: linear-gradient(90deg, #38bdf8 0%, #6366f1 100%);
-  transform: translateY(-2px) scale(1.07);
-  box-shadow: 0 6px 24px #6366f155;
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+  filter: brightness(1.05);
+}
+.achat-btn-edit:hover::before {
+  left: 100%;
+}
+.achat-btn-edit:active {
+  transform: translateY(0) scale(0.98);
 }
 .achat-btn-del {
-  background: linear-gradient(90deg, #ef4444 0%, #fbbf24 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: #fff;
-  border-radius: 16px;
+  border-radius: 12px;
   border: none;
-  box-shadow: 0 2px 8px #ef444433;
-  transition: transform 0.13s, box-shadow 0.18s, background 0.18s;
-  font-size: 1.18rem;
-  padding: 0.45rem 0.85rem;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.9rem;
+  padding: 0.5rem 0.8rem;
   font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  min-width: 40px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.achat-btn-del::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
 }
 .achat-btn-del:hover {
-  background: linear-gradient(90deg, #fbbf24 0%, #ef4444 100%);
-  transform: translateY(-2px) scale(1.07);
-  box-shadow: 0 6px 24px #ef444455;
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+  filter: brightness(1.05);
+}
+.achat-btn-del:hover::before {
+  left: 100%;
+}
+.achat-btn-del:active {
+  transform: translateY(0) scale(0.98);
 }
 .achat-btn-apercu {
-  background: linear-gradient(90deg, #06d6a0 0%, #48b1f3 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: #fff;
-  border-radius: 16px;
+  border-radius: 12px;
   border: none;
-  box-shadow: 0 2px 8px #06d6a033;
-  transition: transform 0.13s, box-shadow 0.18s, background 0.18s;
-  font-size: 1.05rem;
-  padding: 0.45rem 1.1rem;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.9rem;
+  padding: 0.5rem 0.8rem;
   font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
 }
 .achat-btn-apercu:hover {
-  background: linear-gradient(90deg, #48b1f3 0%, #06d6a0 100%);
-  transform: translateY(-2px) scale(1.07);
-  box-shadow: 0 6px 24px #06d6a055;
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+  filter: brightness(1.05);
 }
 .achat-btn-facture {
-  background: linear-gradient(90deg, #fbbf24 0%, #10b981 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: #fff;
-  border-radius: 16px;
+  border-radius: 12px;
   border: none;
-  box-shadow: 0 2px 8px #fbbf2433;
-  transition: transform 0.13s, box-shadow 0.18s, background 0.18s;
-  font-size: 1.05rem;
-  padding: 0.45rem 1.1rem;
-  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.9rem;
+  padding: 0.5rem 0.8rem;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
 }
 .achat-btn-facture:hover {
-  background: linear-gradient(90deg, #10b981 0%, #fbbf24 100%);
-  transform: translateY(-2px) scale(1.07);
-  box-shadow: 0 6px 24px #fbbf2455;
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+  filter: brightness(1.05);
+}
+
+.achat-btn-historique {
+  background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+  color: #fff;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.85rem;
+  padding: 0.5rem 0.8rem;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.achat-btn-historique:hover {
+  background: linear-gradient(135deg, #5b21b6 0%, #4c1d95 100%);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.4);
+  filter: brightness(1.05);
 }
 
 /* CARTES PANIER MODERNISÉES */
@@ -4192,56 +4743,7 @@ body {
   overflow: hidden;
 }
 
-.product-actions-modern {
-  display: flex;
-  gap: var(--space-3);
-  align-items: center;
-}
 
-.product-btn-preview-modern {
-  flex: 1;
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  color: var(--primary-600);
-  border: 2px solid var(--primary-200);
-  border-radius: var(--radius-lg);
-  padding: var(--space-3) var(--space-4);
-  font-family: var(--font-heading);
-  font-weight: 500;
-  font-size: var(--text-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: all var(--duration-fast) var(--easing);
-  cursor: pointer;
-}
-
-.product-btn-preview-modern:hover {
-  background: var(--primary-50);
-  border-color: var(--primary-300);
-  transform: translateY(-2px);
-}
-
-.product-btn-cart-modern {
-  flex: 1;
-  background: linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 100%);
-  color: white;
-  border: none;
-  border-radius: var(--radius-lg);
-  padding: var(--space-3) var(--space-4);
-  font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: var(--text-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: all var(--duration-fast) var(--easing);
-  cursor: pointer;
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
-}
-
-.product-btn-cart-modern:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
-}
 
 /* ===========================================
    📝 SYSTÈME DE FORMULAIRES ULTRA-MODERNE
@@ -4529,14 +5031,7 @@ body {
     padding: var(--space-3);
   }
 
-  .product-actions-modern {
-    flex-direction: column;
-  }
 
-  .product-btn-preview-modern,
-  .product-btn-cart-modern {
-    width: 100%;
-  }
 }
 .nav-tabs {
   border: none;

@@ -19,13 +19,25 @@ function Panier({ setActiveTab }) {
   const [achatMsg, setAchatMsg] = useState('');
 
 
+
+
+
+
   // Vider le panier
   const clearPanier = () => {
     console.log('🗑️ Vidage du panier');
     localStorage.removeItem('panier');
+    localStorage.removeItem('panier_force');
+    localStorage.removeItem('panier_backup');
+    localStorage.removeItem('panier_emergency_backup');
+    localStorage.removeItem('panier_timestamp');
+    localStorage.removeItem('panier_last_update');
+    localStorage.removeItem('panier_error_timestamp');
+    localStorage.removeItem('panier_auto_recovery');
+    localStorage.removeItem('panier_emergency_recovery');
     setCart([]);
     setTotal(0);
-    showToast('Panier vidé', 'warning');
+    showToast('Panier vidé complètement', 'warning');
   };
 
   // Fonction pour charger le panier depuis localStorage
@@ -33,33 +45,64 @@ function Panier({ setActiveTab }) {
     console.log('🔄 CHARGEMENT PANIER - Début');
 
     try {
-      // Vérifier d'abord le timestamp pour voir si les données sont récentes
+      // Vérifier tous les emplacements possibles
       const timestamp = localStorage.getItem('panier_timestamp');
+      const lastUpdate = localStorage.getItem('panier_last_update');
+      const errorTimestamp = localStorage.getItem('panier_error_timestamp');
+
       console.log('⏰ Timestamp panier:', timestamp);
+      console.log('📅 Last Update:', lastUpdate);
+      console.log('⚠️ Error Timestamp:', errorTimestamp);
 
       let stored = localStorage.getItem('panier');
-      console.log('📦 localStorage panier:', stored);
+      let source = 'principal';
 
-      // Si pas de données principales, essayer la sauvegarde alternative
+      console.log('📦 localStorage panier (principal):', stored ? stored.substring(0, 100) + '...' : 'null');
+
+      // Si pas de données principales, essayer toutes les alternatives
       if (!stored || stored.trim() === '' || stored === 'undefined' || stored === 'null') {
-        console.log('🔄 Tentative sauvegarde alternative');
-        stored = localStorage.getItem('panier_backup');
-        console.log('📦 Sauvegarde alternative:', stored);
+        console.log('🔄 Recherche de sauvegardes alternatives...');
+
+        // Essayer la sauvegarde forcée
+        stored = localStorage.getItem('panier_force');
+        if (stored && stored.trim() !== '') {
+          source = 'forcée';
+          console.log('📦 Sauvegarde forcée trouvée:', stored.substring(0, 100) + '...');
+        } else {
+          // Essayer la sauvegarde alternative
+          stored = localStorage.getItem('panier_backup');
+          if (stored && stored.trim() !== '') {
+            source = 'alternative';
+            console.log('📦 Sauvegarde alternative trouvée:', stored.substring(0, 100) + '...');
+          }
+        }
       }
 
+      console.log('🎯 Source des données:', source);
+
       if (stored && stored.trim() !== '' && stored !== 'undefined' && stored !== 'null') {
+        console.log('🔍 Tentative de parsing JSON...');
         const parsed = JSON.parse(stored);
-        console.log('🎯 JSON.parse() réussi:', parsed);
+        console.log('🎯 JSON.parse() réussi, type:', typeof parsed, 'length:', Array.isArray(parsed) ? parsed.length : 'N/A');
 
         if (Array.isArray(parsed)) {
-          // Nettoyer les données invalides
-          const cleanItems = parsed.filter(item =>
-            item &&
-            (item.Titre || item.title) &&
-            typeof item === 'object'
-          );
+          console.log('📋 Tableau détecté avec', parsed.length, 'éléments bruts');
 
-          console.log('🧹 Items nettoyés:', cleanItems.length, '/', parsed.length);
+          // Nettoyer les données invalides avec logique plus souple
+          const cleanItems = parsed.filter((item, index) => {
+            // Accepter les objets qui ont au moins un identifiant ou un titre
+            const isValid = item &&
+                           typeof item === 'object' &&
+                           (item.Titre || item.title || item.ID_PROD || item.id);
+
+            if (!isValid) {
+              console.log(`⚠️ Item ${index} invalide filtré:`, item);
+            }
+
+            return isValid;
+          });
+
+          console.log('🧹 Nettoyage terminé:', cleanItems.length, '/', parsed.length, 'items valides');
 
           if (cleanItems.length > 0) {
             console.log('✅ Panier valide avec', cleanItems.length, 'articles');
@@ -68,34 +111,118 @@ function Panier({ setActiveTab }) {
             const calculatedTotal = cleanItems.reduce((sum, item) => {
               const price = item?.Prix_unitaire || item?.price || 500;
               const quantity = item?.quantite || item?.quantity || 1;
-              return sum + (price * quantity);
+              const itemTotal = price * quantity;
+              console.log(`💵 Item "${item.Titre || item.title}": ${price} x ${quantity} = ${itemTotal}`);
+              return sum + itemTotal;
             }, 0);
 
             setTotal(calculatedTotal);
-            console.log('💰 Total calculé:', calculatedTotal);
+            console.log('💰 Total final calculé:', calculatedTotal);
+
+            // Sauvegarder immédiatement pour confirmer
+            try {
+              localStorage.setItem('panier', JSON.stringify(cleanItems));
+              console.log('🔄 Données resynchronisées dans localStorage');
+            } catch (resyncError) {
+              console.error('❌ Échec resynchronisation:', resyncError);
+            }
+
           } else {
-            console.log('⚠️ Aucun item valide trouvé');
+            console.log('⚠️ Aucun item valide trouvé après nettoyage');
             setCart([]);
             setTotal(0);
           }
         } else {
-          console.log('⚠️ Données panier pas un tableau');
+          console.log('⚠️ Données panier pas un tableau, type:', typeof parsed);
           setCart([]);
           setTotal(0);
         }
       } else {
-        console.log('📭 Aucun panier trouvé');
+        console.log('📭 Aucun panier trouvé dans toutes les sources');
+        console.log('🔍 État localStorage:');
+        console.log('  - panier:', localStorage.getItem('panier'));
+        console.log('  - panier_force:', localStorage.getItem('panier_force'));
+        console.log('  - panier_backup:', localStorage.getItem('panier_backup'));
         setCart([]);
         setTotal(0);
       }
     } catch (error) {
-      console.error('❌ ERREUR chargement panier:', error);
+      console.error('❌ ERREUR CRITIQUE chargement panier:', error);
+      console.error('Stack trace:', error.stack);
+
+      // En cas d'erreur, essayer de récupérer depuis les backups
+      try {
+        const backup = localStorage.getItem('panier_backup');
+        if (backup) {
+          console.log('🔧 Tentative récupération backup...');
+          const parsedBackup = JSON.parse(backup);
+          if (Array.isArray(parsedBackup) && parsedBackup.length > 0) {
+            console.log('✅ Récupération backup réussie');
+            setCart(parsedBackup);
+            setTotal(parsedBackup.reduce((sum, item) =>
+              sum + ((item?.Prix_unitaire || item?.price || 500) * (item?.quantite || item?.quantity || 1)), 0
+            ));
+            return;
+          }
+        }
+      } catch (backupError) {
+        console.error('❌ Échec récupération backup:', backupError);
+      }
+
+      // Si tout échoue
       setCart([]);
       setTotal(0);
     }
 
     console.log('🔄 CHARGEMENT PANIER - Fin');
   };
+
+  // Surveillance continue pour auto-récupération
+  useEffect(() => {
+    const checkAndRecover = () => {
+    const stored = localStorage.getItem('panier');
+      const currentLength = cart.length;
+
+    if (stored) {
+        try {
+      const parsed = JSON.parse(stored);
+          const storedLength = parsed.length;
+
+          if (storedLength !== currentLength && storedLength > currentLength) {
+            console.warn('🔄 PANIER: Désynchronisation détectée, auto-récupération...');
+            console.log('📊 Panier actuel:', currentLength, 'localStorage:', storedLength);
+
+            // Auto-récupération depuis localStorage
+            const cleanItems = parsed.filter(item =>
+              item &&
+              (item.Titre || item.title) &&
+              typeof item === 'object'
+            );
+
+            if (cleanItems.length > 0) {
+              console.log('✅ Récupération automatique:', cleanItems.length, 'films');
+              setCart(cleanItems);
+
+              const calculatedTotal = cleanItems.reduce((sum, item) => {
+                const price = item?.Prix_unitaire || item?.price || 500;
+                const quantity = item?.quantite || item?.quantity || 1;
+                return sum + (price * quantity);
+              }, 0);
+
+              setTotal(calculatedTotal);
+              console.log('💰 Total recalculé:', calculatedTotal);
+            }
+          }
+        } catch (error) {
+          console.error('❌ Erreur auto-récupération Panier:', error);
+        }
+      }
+    };
+
+    // Vérifier toutes les 4 secondes
+    const recoveryInterval = setInterval(checkAndRecover, 4000);
+    return () => clearInterval(recoveryInterval);
+  }, [cart]);
 
   useEffect(() => {
     console.log('🚀 Panier component mounted');
@@ -105,11 +232,13 @@ function Panier({ setActiveTab }) {
     // Écouter les mises à jour du panier
     const handlePanierUpdate = (event) => {
       console.log('🛒 Événement panierUpdated reçu:', event.detail);
-      console.log('🔄 Rechargement du panier...');
-      // Recharger le panier depuis localStorage
+      console.log('⏳ Attente avant rechargement pour synchro...');
+
+      // Attendre un délai plus long pour s'assurer que toutes les sauvegardes sont terminées
       setTimeout(() => {
+        console.log('🔄 Rechargement du panier depuis localStorage...');
         loadCartFromStorage();
-      }, 200); // Augmenter le délai pour s'assurer que localStorage est bien mis à jour
+      }, 800); // Augmenté à 800ms pour être sûr que tout est synchronisé
     };
 
     console.log('👂 Ajout de l\'écouteur d\'événements');
@@ -228,44 +357,7 @@ function Panier({ setActiveTab }) {
                 Explorer le Catalogue
               </button>
 
-              {/* Boutons de diagnostic */}
-              <div style={{marginTop: '1rem', display: 'flex', gap: '0.5rem'}}>
-                <button
-                  className="btn-secondary-modern"
-                  onClick={() => {
-                    console.log('🔍 === DIAGNOSTIC COMPLET ===');
-                    const stored = localStorage.getItem('panier');
-                    const backup = localStorage.getItem('panier_backup');
-                    const timestamp = localStorage.getItem('panier_timestamp');
-                    console.log('📦 localStorage panier:', stored);
-                    console.log('📦 localStorage backup:', backup);
-                    console.log('⏰ Timestamp:', timestamp);
-                    console.log('🛒 Cart state:', cart);
-                    alert(`Diagnostic:\n- localStorage: ${stored ? 'PRESENT' : 'VIDE'}\n- Backup: ${backup ? 'PRESENT' : 'VIDE'}\n- Cart: ${cart.length} items\n- Timestamp: ${timestamp || 'AUCUN'}`);
-                  }}
-                >
-                  <i className="bi bi-search me-1"></i>
-                  Diagnostic
-                </button>
-                <button
-                  className="btn-secondary-modern"
-                  onClick={() => {
-                    console.log('🔄 FORCE REFRESH PANIER');
-                    loadCartFromStorage();
-                    alert('Panier rechargé ! Vérifiez la console.');
-                  }}
-                >
-                  <i className="bi bi-arrow-clockwise me-1"></i>
-                  Refresh
-                </button>
-                <button
-                  className="btn-ghost-modern"
-                  onClick={clearPanier}
-                >
-                  <i className="bi bi-trash me-1"></i>
-                  Vider Panier
-                </button>
-              </div>
+
             </div>
           ) : (
             <div className="panier-items-modern">
@@ -289,19 +381,19 @@ function Panier({ setActiveTab }) {
                       </div>
 
                       <div className="panier-item-details-modern">
-                        {item.client && (
+                      {item.client && (
                           <div className="panier-item-client-modern">
                             <i className="bi bi-person me-1"></i>
                             {item.client.NomCli} {item.client.PrenomCli}
                           </div>
-                        )}
-                        {item.vendeur && (
+                      )}
+                      {item.vendeur && (
                           <div className="panier-item-vendeur-modern">
                             <i className="bi bi-shop me-1"></i>
                             {item.vendeur.NomVendeur} {item.vendeur.PrenomVendeur}
                           </div>
-                        )}
-                      </div>
+                      )}
+                    </div>
 
                       <div className="panier-item-footer-modern">
                         <div className="panier-item-quantity-modern">
@@ -345,32 +437,32 @@ function Panier({ setActiveTab }) {
                   className={`btn-success-modern flex-fill ${achatLoading ? 'btn-loading' : ''}`}
                   disabled={achatLoading}
                   onClick={async () => {
-                    setAchatLoading(true);
-                    setAchatMsg('');
-                    try {
-                      for (const item of cart) {
-                        await addPurchase({
-                          ID_CLIENT: item.client.ID_CLIENT,
-                          ID_PROD: item.ID_PROD,
-                          ID_VENDEUR: item.vendeur ? item.vendeur.ID_VENDEUR : undefined,
-                          DateAchat: new Date().toISOString().slice(0, 10),
-                          Prix_unitaire: 500,
-                          Quantite: item.quantite || 1
-                        });
-                      }
-                      setAchatMsg('Achats enregistrés avec succès !');
-                      showToast('Facture générée et achats enregistrés !','success');
-                      generatePDF(cart);
-                      setTimeout(() => {
-                        vider();
-                        setAchatLoading(false);
-                        if (setActiveTab) setActiveTab('achats');
-                      }, 1700);
-                    } catch (e) {
-                      setAchatMsg('Erreur lors de la création des achats.');
-                      showToast('Erreur lors de la création des achats.','danger');
-                      setAchatLoading(false);
-                    }
+                setAchatLoading(true);
+                setAchatMsg('');
+                try {
+                  for (const item of cart) {
+                    await addPurchase({
+                      ID_CLIENT: item.client.ID_CLIENT,
+                      ID_PROD: item.ID_PROD,
+                      ID_VENDEUR: item.vendeur ? item.vendeur.ID_VENDEUR : undefined,
+                      DateAchat: new Date().toISOString().slice(0, 10),
+                      Prix_unitaire: 500,
+                      Quantite: item.quantite || 1
+                    });
+                  }
+                  setAchatMsg('Achats enregistrés avec succès !');
+                  showToast('Facture générée et achats enregistrés !','success');
+                  generatePDF(cart);
+                  setTimeout(() => {
+                    vider();
+                    setAchatLoading(false);
+                    if (setActiveTab) setActiveTab('achats');
+                  }, 1700);
+                } catch (e) {
+                  setAchatMsg('Erreur lors de la création des achats.');
+                  showToast('Erreur lors de la création des achats.','danger');
+                  setAchatLoading(false);
+                }
                   }}
                 >
                   {achatLoading ? (

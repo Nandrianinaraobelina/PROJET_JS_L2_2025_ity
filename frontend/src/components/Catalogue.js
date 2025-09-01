@@ -5,13 +5,72 @@ import './Catalogue.css'; // Nous créerons ce fichier CSS ensuite
 import { getClients } from '../services/clientService';
 import { getVendors } from '../services/vendorService';
 
-function Catalogue({ setActiveTab }) {
+function Catalogue({ setActiveTab, onFilmsSelected }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Filtrer les produits selon le terme de recherche
+  const filteredProducts = products.filter(product => {
+    if (!searchTerm.trim()) return true;
+
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      product?.Titre?.toLowerCase().includes(searchLower) ||
+      product?.Genre?.toLowerCase().includes(searchLower) ||
+      product?.Realisateur?.toLowerCase().includes(searchLower)
+    );
+  });
+
+  // Réinitialiser la page à 1 quand on change la recherche
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
   const [cart, setCart] = useState(() => {
-    const stored = localStorage.getItem('panier');
-    return stored ? JSON.parse(stored) : [];
+    console.log('🚀 INITIALISATION CATALOGUE - Chargement panier depuis localStorage');
+
+    // Essayer plusieurs sources
+    let stored = localStorage.getItem('panier');
+    let source = 'principal';
+
+    if (!stored || stored.trim() === '' || stored === 'undefined' || stored === 'null') {
+      console.log('🔄 Recherche sauvegarde alternative...');
+      stored = localStorage.getItem('panier_force');
+      if (stored) source = 'forcée';
+
+      if (!stored) {
+        stored = localStorage.getItem('panier_backup');
+        if (stored) source = 'backup';
+      }
+    }
+
+    if (stored && stored.trim() !== '' && stored !== 'undefined' && stored !== 'null') {
+      try {
+        const parsed = JSON.parse(stored);
+        console.log(`✅ Panier chargé depuis ${source}:`, parsed.length, 'films');
+
+        // Nettoyer les données invalides (logique plus souple)
+        const cleanCart = parsed.filter(item =>
+          item &&
+          typeof item === 'object' &&
+          (item.Titre || item.title || item.ID_PROD || item.id)
+        );
+
+        if (cleanCart.length !== parsed.length) {
+          console.warn(`🧹 Nettoyage: ${cleanCart.length}/${parsed.length} items valides`);
+        }
+
+        console.log('🎯 Panier Catalogue initialisé avec:', cleanCart.length, 'films');
+        return cleanCart;
+      } catch (error) {
+        console.error('❌ Erreur chargement panier initial:', error);
+        return [];
+      }
+    } else {
+      console.log('📭 Aucun panier trouvé, initialisation vide');
+      return [];
+    }
   });
   const [modalOpen, setModalOpen] = useState(false);
   const [modalImg, setModalImg] = useState('');
@@ -35,37 +94,89 @@ function Catalogue({ setActiveTab }) {
   const [sessionVendor, setSessionVendor] = useState(null);
   const [addedFilmsCount, setAddedFilmsCount] = useState(0);
 
+
+
+  // Surveillance continue de la synchronisation
+  useEffect(() => {
+    const checkSync = () => {
+      const stored = localStorage.getItem('panier');
+      const currentLength = cart.length;
+
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          const storedLength = parsed.length;
+
+          if (storedLength !== currentLength) {
+            console.warn('⚠️ DÉSYNC DÉTECTÉE:', {
+              catalogue: currentLength,
+              localStorage: storedLength,
+              timestamp: new Date().toISOString()
+            });
+
+            // Auto-récupération : si Catalogue a plus de données, sauvegarder
+            if (currentLength > storedLength && currentLength > 0) {
+              console.log('🔧 Auto-récupération: sauvegarde des données Catalogue');
+              try {
+                const cartJson = JSON.stringify(cart);
+                localStorage.setItem('panier', cartJson);
+                localStorage.setItem('panier_timestamp', Date.now().toString());
+                localStorage.setItem('panier_auto_recovery', new Date().toISOString());
+
+                // Forcer l'événement de synchronisation
+                setTimeout(() => {
+                  window.dispatchEvent(new CustomEvent('panierUpdated', {
+                    detail: {
+                      action: 'auto_recovery',
+                      timestamp: Date.now(),
+                      source: 'catalogue_auto_sync'
+                    }
+                  }));
+                }, 1000); // Synchronisé avec le délai du Panier
+
+                console.log('✅ Auto-récupération terminée');
+              } catch (error) {
+                console.error('❌ Échec auto-récupération:', error);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('❌ Erreur vérification sync:', error);
+        }
+      } else if (currentLength > 0) {
+        console.warn('⚠️ Catalogue a des données mais localStorage est vide!');
+      }
+    };
+
+    // Vérifier toutes les 3 secondes
+    const interval = setInterval(checkSync, 3000);
+    return () => clearInterval(interval);
+  }, [cart]);
+
   // Synchronise le panier avec localStorage
   useEffect(() => {
-    console.log('💾 SAUVEGARDE PANIER - Début, longueur:', cart.length);
+    console.log('💾 SAUVEGARDE PANIER -', cart.length, 'articles');
 
-    // Nettoyer le panier pour éviter les données corrompues
+    // Nettoyer le panier pour éviter les données corrompues (logique plus souple)
     const cleanCart = cart.filter(item =>
       item &&
-      (item.Titre || item.title) &&
-      typeof item === 'object'
+      typeof item === 'object' &&
+      (item.Titre || item.title || item.ID_PROD || item.id)
     );
 
-    console.log('🧹 Panier nettoyé:', cleanCart);
+    console.log('🧹 Panier nettoyé:', cleanCart.length, '/', cart.length, 'items valides');
 
     try {
       const cartJson = JSON.stringify(cleanCart);
-      console.log('📝 JSON généré:', cartJson);
+      console.log('📝 JSON généré:', cartJson.substring(0, 200) + (cartJson.length > 200 ? '...' : ''));
 
+      // Sauvegarde principale
       localStorage.setItem('panier', cartJson);
       localStorage.setItem('panier_timestamp', Date.now().toString());
+      localStorage.setItem('panier_last_update', new Date().toISOString());
 
-      console.log('✅ Panier sauvegardé avec succès');
+      console.log('✅ Panier sauvegardé avec succès dans localStorage');
 
-      // Vérification immédiate
-      const verify = localStorage.getItem('panier');
-      const timestamp = localStorage.getItem('panier_timestamp');
-      console.log('🔍 Vérification - JSON:', verify);
-      console.log('🔍 Vérification - Timestamp:', timestamp);
-
-      if (verify !== cartJson) {
-        console.error('❌ ERREUR: La sauvegarde n\'a pas fonctionné correctement!');
-      }
     } catch (error) {
       console.error('❌ ERREUR sauvegarde panier:', error);
       // Essayer une approche alternative
@@ -73,11 +184,9 @@ function Catalogue({ setActiveTab }) {
         localStorage.setItem('panier_backup', JSON.stringify(cleanCart));
         console.log('💾 Sauvegarde alternative réussie');
       } catch (backupError) {
-        console.error('❌ Même la sauvegarde alternative a échoué:', backupError);
+        console.error('❌ Sauvegarde alternative échouée:', backupError);
       }
     }
-
-    console.log('💾 SAUVEGARDE PANIER - Fin');
   }, [cart]);
 
   // Charger la session d'achat depuis localStorage
@@ -107,37 +216,30 @@ function Catalogue({ setActiveTab }) {
     savePurchaseSession(client, vendor, 0, true);
   };
 
-  // Ajouter un film en mode session multiple (sans modal)
-  const addFilmToCartQuick = (product) => {
-    // Vérifier que le produit existe
+  // Ajouter un film directement aux ventes (sans panier)
+  const addFilmToVentes = (product) => {
     if (!product) {
-      console.error('❌ Produit null ou undefined dans addFilmToCartQuick');
+      console.error('❌ Produit null ou undefined');
       return;
     }
 
-    if (!sessionClient || !sessionVendor) {
-      // Si pas de session, ouvrir la modal normale
-      setPendingProduct(product);
-      setClientModalOpen(true);
-      return;
-    }
+    console.log('🎬 Ajout du film aux ventes:', product.Titre);
 
-    const newCartItem = {
-      ...product,
-      client: sessionClient,
-      vendeur: sessionVendor,
-      quantite: 1,
-      dateAjout: new Date().toISOString()
+    // Créer l'objet film pour les ventes
+    const filmForVentes = {
+      ID_PROD: product.ID_PROD,
+      quantite: 1
     };
 
-    console.log('📦 Ajout du film au panier local:', newCartItem);
-    setCart(prevCart => {
-      const newCart = [...prevCart, newCartItem];
-      console.log('🛒 Nouveau panier local:', newCart);
-      return newCart;
-    });
-    setAddedFilmsCount(prev => prev + 1);
-    savePurchaseSession(sessionClient, sessionVendor, addedFilmsCount + 1, true);
+    // Envoyer vers le composant parent pour les ventes
+    if (onFilmsSelected) {
+      onFilmsSelected([filmForVentes]);
+    }
+
+    // Changer vers l'onglet ventes
+    if (setActiveTab) {
+      setActiveTab('ventes');
+    }
 
     // Notification de succès
     const notification = document.createElement('div');
@@ -146,8 +248,8 @@ function Catalogue({ setActiveTab }) {
       <div class="notification-content-modern">
         <div class="notification-icon-modern">🎬</div>
         <div class="notification-text-modern">
-          <div class="notification-title-modern">Film ajouté !</div>
-          <div class="notification-message-modern">${product?.Titre || 'Film'} ajouté (${addedFilmsCount + 1} films)</div>
+          <div class="notification-title-modern">Film sélectionné !</div>
+          <div class="notification-message-modern">${product?.Titre || 'Film'} envoyé aux ventes</div>
         </div>
       </div>
     `;
@@ -158,12 +260,6 @@ function Catalogue({ setActiveTab }) {
       notification.classList.remove('show');
       setTimeout(() => document.body.removeChild(notification), 300);
     }, 3000);
-
-    // Notifier les autres composants
-    console.log('📡 Envoi de l\'événement panierUpdated');
-    window.dispatchEvent(new CustomEvent('panierUpdated', {
-      detail: { action: 'add', item: newCartItem }
-    }));
   };
 
   // Terminer la session d'achat multiple
@@ -202,9 +298,9 @@ function Catalogue({ setActiveTab }) {
       // Notifier les autres composants
       setTimeout(() => {
         window.dispatchEvent(new CustomEvent('panierUpdated', {
-          detail: { action: 'update_quantity', itemId, newQuantity }
+          detail: { action: 'update_quantity', itemId, newQuantity, timestamp: Date.now(), source: 'quantity_update' }
         }));
-      }, 100);
+      }, 1000); // Délai synchronisé avec le Panier
 
       return updatedCart;
     });
@@ -235,36 +331,7 @@ function Catalogue({ setActiveTab }) {
     return <div className="container mt-3"><div className="alert alert-danger">{error}</div></div>;
   }
 
-  // Fonction de test API
-  const testAPI = async () => {
-    console.log('🧪 Test des APIs...');
-    try {
-      const response = await fetch('http://localhost:5000/api/test');
-      const data = await response.json();
-      console.log('✅ API test:', data);
-      alert('API fonctionne: ' + JSON.stringify(data));
-    } catch (error) {
-      console.error('❌ Erreur API test:', error);
-      alert('Erreur API: ' + error.message);
-    }
-  };
 
-  // Test des APIs clients et vendeurs
-  const testClientsVendors = async () => {
-    console.log('🧪 Test APIs clients et vendeurs...');
-    try {
-      const [clients, vendors] = await Promise.all([
-        getClients(),
-        getVendors()
-      ]);
-      console.log('✅ Clients:', clients.length, 'éléments');
-      console.log('✅ Vendeurs:', vendors.length, 'éléments');
-      alert(`Données chargées:\n- ${clients.length} clients\n- ${vendors.length} vendeurs`);
-    } catch (error) {
-      console.error('❌ Erreur APIs:', error);
-      alert('Erreur APIs: ' + error.message);
-    }
-  };
 
   return (
     <div className="section-card-modern fade-in">
@@ -314,65 +381,7 @@ function Catalogue({ setActiveTab }) {
         </div>
       </div>
 
-      {/* Section pour démarrer une session multiple */}
-      {!isMultiplePurchaseMode && (
-        <div className="start-session-section-modern">
-          <div className="start-session-card-modern">
-            <div className="start-session-icon-modern">🚀</div>
-            <div className="start-session-content-modern">
-              <h3 className="start-session-title-modern">
-                Acheter Plusieurs Films Rapidement
-              </h3>
-              <p className="start-session-description-modern">
-                Sélectionnez un client et un vendeur pour commencer une session d'achat multiple.
-                Ajoutez ensuite plusieurs films sans resélectionner à chaque fois !
-              </p>
-              <button
-                className="btn-start-session-modern"
-                onClick={() => {
-                  setPendingProduct(null);
-                  setClientsError('');
-                  setVendorsError('');
-                  setClientsLoading(true);
-                  setVendorsLoading(true);
-                  setSelectedClient(null);
-                  setSelectedVendor(null);
-                  setQuantity(1);
 
-                  // Charger les clients et vendeurs pour la session
-                  const [clientsPromise, vendorsPromise] = [
-                    getClients().catch(e => {
-                      console.error('❌ Erreur chargement clients:', e);
-                      setClientsError("Erreur lors du chargement des clients");
-                      return [];
-                    }),
-                    getVendors().catch(e => {
-                      console.error('❌ Erreur chargement vendeurs:', e);
-                      setVendorsError("Erreur lors du chargement des vendeurs");
-                      return [];
-                    })
-                  ];
-
-                  Promise.all([clientsPromise, vendorsPromise]).then(([clientsData, vendorsData]) => {
-                    setClients(clientsData);
-                    setVendors(vendorsData);
-                    setClientsLoading(false);
-                    setVendorsLoading(false);
-                    setClientModalOpen(true);
-                  }).catch(e => {
-                    console.error('❌ Erreur lors du chargement:', e);
-                    setClientsLoading(false);
-                    setVendorsLoading(false);
-                  });
-                }}
-              >
-                <i className="bi bi-play-circle me-2"></i>
-                Démarrer Session Multiple
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* BARRE DE RECHERCHE MODERNE */}
       <div className="search-container-modern mb-4">
@@ -380,8 +389,8 @@ function Catalogue({ setActiveTab }) {
           type="text"
           className="search-input-modern"
           placeholder="Rechercher un film..."
-          value=""
-          onChange={() => {}}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
         <div className="search-icon-modern">
           <i className="bi bi-search"></i>
@@ -392,36 +401,10 @@ function Catalogue({ setActiveTab }) {
       <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 gap-sm-0 mb-4">
         <div className="text-muted">
           <small className="d-block d-sm-inline">
-            {products.length} film{products.length > 1 ? 's' : ''} disponible{products.length > 1 ? 's' : ''}
+            {filteredProducts.length} film{filteredProducts.length > 1 ? 's' : ''} disponible{filteredProducts.length > 1 ? 's' : ''} {searchTerm && `(sur ${products.length} total)`}
           </small>
         </div>
         <div className="d-flex flex-column flex-sm-row gap-2 gap-sm-3 w-100 w-sm-auto">
-          <button
-            className="btn-glass-modern flex-fill flex-sm-shrink-0 btn-bounce"
-            onClick={testAPI}
-            style={{
-              fontSize: '0.8rem',
-              padding: '0.5rem 1rem',
-              minHeight: '36px'
-            }}
-          >
-            <i className="bi bi-wifi me-1"></i>
-            <span className="d-none d-sm-inline">Test API</span>
-            <span className="d-sm-none">API</span>
-          </button>
-          <button
-            className="btn-glass-modern flex-fill flex-sm-shrink-0 btn-bounce"
-            onClick={testClientsVendors}
-            style={{
-              fontSize: '0.8rem',
-              padding: '0.5rem 1rem',
-              minHeight: '36px'
-            }}
-          >
-            <i className="bi bi-people me-1"></i>
-            <span className="d-none d-sm-inline">Test Données</span>
-            <span className="d-sm-none">Données</span>
-          </button>
         </div>
       </div>
 
@@ -719,9 +702,9 @@ function Catalogue({ setActiveTab }) {
                     }
 
                     const newCartItem = {
-                      ...pendingProduct,
-                      client: selectedClient,
-                      vendeur: selectedVendor,
+                    ...pendingProduct,
+                    client: selectedClient,
+                    vendeur: selectedVendor,
                       quantite: quantity,
                       dateAjout: new Date().toISOString(),
                       id: Date.now() // ID unique pour éviter les doublons
@@ -780,13 +763,22 @@ function Catalogue({ setActiveTab }) {
                       }, 300);
                     }, 3000);
 
-                    // Attendre un peu avant d'envoyer l'événement pour s'assurer que setCart est terminé
+                    // Attendre suffisamment longtemps pour s'assurer que localStorage est complètement mis à jour
                     setTimeout(() => {
-                      console.log('📡 Envoi événement panierUpdated');
+                      console.log('📡 Envoi événement panierUpdated après délai');
+                      console.log('🔍 Vérification finale localStorage:', localStorage.getItem('panier') ? 'présent' : 'absent');
+
                       window.dispatchEvent(new CustomEvent('panierUpdated', {
-                        detail: { action: 'add', item: newCartItem }
+                        detail: {
+                          action: 'add',
+                          item: newCartItem,
+                          timestamp: Date.now(),
+                          source: 'modal_add'
+                        }
                       }));
-                    }, 200);
+
+                      console.log('✅ Événement panierUpdated envoyé avec succès');
+                    }, 1000); // Augmenté à 1000ms pour synchroniser avec Panier (800ms + marge)
 
                     // Reset modal
                 setClientModalOpen(false);
@@ -835,38 +827,38 @@ function Catalogue({ setActiveTab }) {
       <div className="d-flex justify-content-between align-items-center mb-2">
         <button className="btn catalogue-btn-nav" onClick={() => setPage(page-1)} disabled={page === 1}><i className="bi bi-arrow-left"></i> Précédent</button>
         <span className="fw-bold">Page {page}</span>
-        <button className="btn catalogue-btn-nav" onClick={() => setPage(page+1)} disabled={page * itemsPerPage >= products.length}>Suivant <i className="bi bi-arrow-right"></i></button>
+        <button className="btn catalogue-btn-nav" onClick={() => setPage(page+1)} disabled={page * itemsPerPage >= filteredProducts.length}>Suivant <i className="bi bi-arrow-right"></i></button>
       </div>
       <div className="row">
-        {products.length > 0 ? (
-          products.slice((page-1)*itemsPerPage, page*itemsPerPage).map(product => {
+        {filteredProducts.length > 0 ? (
+          filteredProducts.slice((page-1)*itemsPerPage, page*itemsPerPage).map(product => {
             if (!product) return null;
             return (
               <div key={product.ID_PROD || Math.random()} className="col-md-4 col-lg-3 mb-4">
-              <div className="product-card-modern hover-lift">
-                <img 
-                  src={product.Photo ? (product.Photo.startsWith('http') ? product.Photo : `http://localhost:5000/uploads/${product.Photo}`) : 'https://via.placeholder.com/300x400.png?text=Pas+d\'image'}
-                  className="product-image-modern"
-                  alt={product?.Titre || 'Film'} 
-                  style={{cursor:'pointer'}}
-                  onClick={() => { setModalImg(product.Photo ? (product.Photo.startsWith('http') ? product.Photo : `http://localhost:5000/uploads/${product.Photo}`) : 'https://via.placeholder.com/300x400.png?text=Pas+d\'image'); setModalOpen(true); }}
-                />
-                <div className="product-content-modern">
-                  <h5 className="product-title-modern">{product?.Titre || 'Film sans titre'}</h5>
-                  <p className="product-description-modern" style={{marginBottom: '1rem'}}>
-                    {product.Genre && `Genre: ${product.Genre}`}
-                    {product.Realisateur && ` • Réalisateur: ${product.Realisateur}`}
-                  </p>
-                  <div className="product-price-modern">Prix : {product?.Prix_unitaire || 500} ARIARY</div>
-                  <div className="product-actions-modern">
+                            <div className="product-card-modern hover-lift">
+                {/* Image avec overlay d'actions */}
+                <div className="product-image-container-modern">
+                  <img
+                    src={product.Photo ? (product.Photo.startsWith('http') ? product.Photo : `http://localhost:5000/uploads/${product.Photo}`) : 'https://via.placeholder.com/300x400.png?text=Pas+d\'image'}
+                    className="product-image-modern"
+                    alt={product?.Titre || 'Film'}
+                    loading="lazy"
+                  />
+
+                  {/* Overlay d'actions rapide */}
+                  <div className="product-overlay-modern">
                     <button
-                      className="product-btn-preview-modern"
-                      onClick={() => { setModalImg(product.Photo ? (product.Photo.startsWith('http') ? product.Photo : `http://localhost:5000/uploads/${product.Photo}`) : 'https://via.placeholder.com/300x400.png?text=Pas+d\'image'); setModalOpen(true); }}
+                      className="product-btn-overlay-modern product-btn-preview-overlay-modern"
+                      onClick={() => {
+                        setModalImg(product.Photo ? (product.Photo.startsWith('http') ? product.Photo : `http://localhost:5000/uploads/${product.Photo}`) : 'https://via.placeholder.com/300x400.png?text=Pas+d\'image');
+                        setModalOpen(true);
+                      }}
+                      title="Aperçu du film"
                     >
-                      <i className="bi bi-eye"></i> Aperçu
+                      <i className="bi bi-eye-fill"></i>
                     </button>
                     <button
-                      className="product-btn-cart-modern"
+                      className="product-btn-overlay-modern product-btn-cart-overlay-modern"
                       onClick={async () => {
                         console.log('🔘 Bouton "Ajouter au panier" cliqué pour le produit:', product);
 
@@ -876,9 +868,9 @@ function Catalogue({ setActiveTab }) {
                           return;
                         }
 
-                        // Si on est en mode session multiple, ajouter rapidement
+                        // Si on est en mode session multiple, ajouter directement aux ventes
                         if (isMultiplePurchaseMode && sessionClient && sessionVendor) {
-                          addFilmToCartQuick(product);
+                          addFilmToVentes(product);
                           return;
                         }
 
@@ -925,9 +917,61 @@ function Catalogue({ setActiveTab }) {
                         setClientsLoading(false);
                         setVendorsLoading(false);
                       }
-                      }}>
-                      <i className="bi bi-cart-plus me-1"></i>
-                      {isMultiplePurchaseMode && sessionClient && sessionVendor ? 'Ajouter' : 'Ajouter au panier'}
+                      }}
+                      title={isMultiplePurchaseMode && sessionClient && sessionVendor ? 'Ajouter au panier' : 'Ajouter au panier'}
+                    >
+                      <i className="bi bi-cart-plus-fill"></i>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Contenu de la carte */}
+                <div className="product-content-modern">
+                  {/* Titre avec icône */}
+                  <div className="product-header-modern">
+                    <div className="product-title-container-modern">
+                      <i className="bi bi-film product-title-icon-modern"></i>
+                      <h5 className="product-title-modern">{product?.Titre || 'Film sans titre'}</h5>
+                    </div>
+                  </div>
+
+                  {/* Informations détaillées */}
+                  <div className="product-info-modern">
+                    <div className="product-meta-modern">
+                      {product.Genre && (
+                        <span className="product-genre-modern">
+                          <i className="bi bi-tag-fill"></i>
+                          {product.Genre}
+                        </span>
+                      )}
+                      {product.Realisateur && (
+                        <span className="product-director-modern">
+                          <i className="bi bi-person-fill"></i>
+                          {product.Realisateur}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Prix avec style amélioré */}
+                  <div className="product-price-section-modern">
+                    <div className="product-price-modern">
+                      <i className="bi bi-cash-coin product-price-icon-modern"></i>
+                      <span className="product-price-value-modern">{product?.Prix_unitaire || 500}</span>
+                      <span className="product-price-currency-modern">ARIARY</span>
+                    </div>
+                  </div>
+
+                                    {/* Bouton rapide "Ajouter au panier" - Visible en permanence */}
+                  <div className="product-quick-add-modern">
+                    <button
+                      className="product-btn-quick-add-modern"
+                      onClick={() => addFilmToVentes(product)}
+                      title="Acheter ce film maintenant"
+                    >
+                      <i className="bi bi-cart-plus-fill me-2"></i>
+                      <span className="quick-add-text-modern">Acheter ce film</span>
+                      <i className="bi bi-arrow-right-short quick-add-arrow-modern"></i>
                     </button>
                   </div>
                 </div>

@@ -267,7 +267,7 @@ function Vendors() {
               >
                 <i className="bi bi-x-circle" style={{marginRight: '0.5rem'}}></i>
                 Annuler
-              </button>
+          </button>
             )}
           </div>
           {formError && (

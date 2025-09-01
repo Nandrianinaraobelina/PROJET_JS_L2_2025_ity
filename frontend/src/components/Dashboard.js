@@ -28,23 +28,62 @@ function Dashboard() {
   const [topVendeurs, setTopVendeurs] = useState([]);
   const [repartitionFilms, setRepartitionFilms] = useState({ labels: [], data: [] });
   const [totalFilmsVendus, setTotalFilmsVendus] = useState(0);
+  const [totalFilmsVendusAllTime, setTotalFilmsVendusAllTime] = useState(0);
+  const [showAllTimeStats, setShowAllTimeStats] = useState(false);
+
+  // Fonction pour basculer entre les statistiques du mois et de tous les temps
+  const toggleStatsView = () => {
+    setShowAllTimeStats(!showAllTimeStats);
+  };
 
   useEffect(() => {
-    async function fetchStats() {
+    const fetchStats = async () => {
       const clients = await getClients();
       const films = await getProducts();
       const vendeurs = await getVendors();
       const ventes = await getSales();
       const achats = await getPurchases();
       setStats({ clients: clients.length, films: films.length, vendeurs: vendeurs.length });
-      // Total films vendus (somme des Quantite)
-      setTotalFilmsVendus(achats.reduce((sum, achat) => sum + (achat.Quantite || 0), 0));
+
+      // Total films vendus - selon le mode d'affichage sélectionné
+      const currentMonth = new Date().toISOString().substring(0, 7); // YYYY-MM
+      const currentMonthPurchases = achats.filter(achat =>
+        achat.DateAchat && achat.DateAchat.substring(0, 7) === currentMonth
+      );
+      const totalFilmsVendusThisMonth = currentMonthPurchases.reduce((sum, achat) => sum + (achat.Quantite || 0), 0);
+      const totalFilmsVendusAllTime = achats.reduce((sum, achat) => sum + (achat.Quantite || 0), 0);
+
+      setTotalFilmsVendusAllTime(totalFilmsVendusAllTime);
+
+      // Afficher le total selon le mode sélectionné
+      if (showAllTimeStats) {
+        setTotalFilmsVendus(totalFilmsVendusAllTime);
+      } else {
+        setTotalFilmsVendus(totalFilmsVendusThisMonth);
+      }
+
+      // Vérifier la cohérence avec Achats
+      const achatsDeletedCount = achats.length - currentMonthPurchases.length;
+      if (achatsDeletedCount > 0) {
+        console.info(`ℹ️ Info: ${achatsDeletedCount} achat(s) hors du mois en cours dans Achats`);
+      }
+
+      // Fonction pour recalculer les statistiques en temps réel
+      const refreshStats = () => {
+        console.log('🔄 Actualisation des statistiques Dashboard...');
+        fetchStats();
+      };
+
+      // Exposer la fonction de rafraîchissement pour un usage externe
+      window.dashboardRefreshStats = refreshStats;
+
       // Stat films par genre
       const genreCount = {};
       films.forEach(f => {
         if (f.Genre) genreCount[f.Genre] = (genreCount[f.Genre] || 0) + 1;
       });
       setGenres(genreCount);
+
       // Evolution des ventes par mois
       const ventesParMois = {};
       ventes.forEach(v => {
@@ -55,6 +94,7 @@ function Dashboard() {
         labels: Object.keys(ventesParMois),
         data: Object.values(ventesParMois)
       });
+
       // Top vendeurs
       const vendeurCount = {};
       ventes.forEach(v => {
@@ -68,6 +108,7 @@ function Dashboard() {
         .sort((a,b) => b.count - a.count)
         .slice(0,5);
       setTopVendeurs(top);
+
       // Répartition des ventes par film
       const filmCount = {};
       ventes.forEach(v => {
@@ -77,9 +118,10 @@ function Dashboard() {
         labels: Object.keys(filmCount).map(id => (films.find(f => f.ID_PROD === Number(id)) || {}).Titre || 'Inconnu'),
         data: Object.values(filmCount)
       });
-    }
+    };
+
     fetchStats();
-  }, []);
+  }, [showAllTimeStats]);
 
   const genreLabels = Object.keys(genres);
   const genreData = Object.values(genres);
@@ -136,15 +178,59 @@ function Dashboard() {
         <div className="col-6 col-md-3 mb-4">
           <div className="data-card-modern">
             <div className="data-header-modern">
-              <div>
-                <div className="data-title-modern">Films vendus</div>
-                <div className="data-subtitle-modern">Ce mois</div>
-              </div>
-              <div className="data-icon-modern">
-                <i className="bi bi-ticket-perforated"></i>
+              <div className="d-flex justify-content-between align-items-start">
+                <div>
+                  <div className="data-title-modern">Films vendus</div>
+                  <div className="data-subtitle-modern d-flex align-items-center">
+                    {showAllTimeStats ? 'Tous les temps' : 'Ce mois'}
+                    {totalFilmsVendusAllTime !== totalFilmsVendus && (
+                      <span className="badge bg-info ms-2" style={{fontSize: '0.7rem'}}>
+                        {showAllTimeStats ? 'Total' : 'Filtré'}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="d-flex align-items-center">
+                  <button
+                    className="btn btn-sm btn-outline-info me-2"
+                    onClick={toggleStatsView}
+                    title={`Afficher les ventes ${showAllTimeStats ? 'du mois' : 'de tous les temps'}`}
+                    style={{padding: '0.2rem 0.4rem', fontSize: '0.7rem'}}
+                  >
+                    <i className={`bi bi-${showAllTimeStats ? 'calendar-month' : 'calendar'} me-1`}></i>
+                    {showAllTimeStats ? 'Mois' : 'Total'}
+                  </button>
+                  <button
+                    className="btn btn-sm btn-outline-secondary me-2"
+                    onClick={() => window.dashboardRefreshStats && window.dashboardRefreshStats()}
+                    title="Actualiser les statistiques"
+                    style={{padding: '0.2rem 0.4rem', fontSize: '0.7rem'}}
+                  >
+                    <i className="bi bi-arrow-clockwise me-1"></i>
+                    Sync
+                  </button>
+                  <div className="data-icon-modern">
+                    <i className="bi bi-ticket-perforated"></i>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="data-value-modern">{totalFilmsVendus}</div>
+            <div className="data-value-modern d-flex align-items-center justify-content-between">
+              <span>{totalFilmsVendus}</span>
+              <div className="d-flex align-items-center">
+                {showAllTimeStats && totalFilmsVendusAllTime !== totalFilmsVendus && (
+                  <small className="text-muted me-2" style={{fontSize: '0.7rem'}}>
+                    /{totalFilmsVendusAllTime}
+                  </small>
+                )}
+                {!showAllTimeStats && (
+                  <small className="badge bg-warning text-dark ms-2" style={{fontSize: '0.6rem'}}>
+                    <i className="bi bi-info-circle me-1"></i>
+                    Mois en cours
+                  </small>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
