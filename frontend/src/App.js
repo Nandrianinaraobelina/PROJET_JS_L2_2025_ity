@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-// Supprimé : import Login from './components/Login';
-// Supprimé : import { isAuthenticated, logout } from './services/authService';
+import React, { useState, useEffect } from 'react';
+import Login from './components/Login';
+import { isAuthenticated, logout, getToken } from './services/authService';
 import Clients from './components/Clients';
 import Products from './components/Products';
 import Vendors from './components/Vendors';
@@ -10,12 +10,51 @@ import Achats from './components/Achats';
 import Ventes from './components/Ventes';
 import Catalogue from './components/Catalogue';
 function App() {
-  // Supprimé : const [auth, setAuth] = useState(isAuthenticated());
+  const [auth, setAuth] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('clients');
   const [selectedFilms, setSelectedFilms] = useState([]);
 
-  // Supprimé : const handleLogin = () => { setAuth(true); };
-  // Supprimé : const handleLogout = () => { logout(); setAuth(false); };
+  // Vérifier l'authentification au démarrage
+  useEffect(() => {
+    const verifyToken = async () => {
+      const token = getToken();
+      if (token) {
+        try {
+          const response = await fetch('http://localhost:5000/api/auth/verify', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (response.ok) {
+            setAuth(true);
+          } else {
+            logout(); // Token invalide, on le supprime
+          }
+        } catch (error) {
+          console.error('Erreur de vérification du token:', error);
+          logout();
+        }
+      }
+      setLoading(false);
+    };
+
+    verifyToken();
+  }, []);
+
+  const handleLogin = () => {
+    setAuth(true);
+    setActiveTab('dashboard');
+  };
+
+  const handleLogout = () => {
+    logout();
+    setAuth(false);
+    setActiveTab('clients');
+  };
 
   // Gérer les films sélectionnés pour les ventes
   const handleFilmsSelected = (films) => {
@@ -58,7 +97,24 @@ function App() {
     ));
   };
 
-  // Supprimé : if (!auth) { return <Login onLogin={handleLogin} />; }
+  // Afficher écran de chargement pendant la vérification
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center min-vh-100">
+        <div className="text-center">
+          <div className="spinner-border text-warning" role="status">
+            <span className="visually-hidden">Chargement...</span>
+          </div>
+          <p className="mt-2 text-muted">Vérification de l'authentification...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Afficher le formulaire de connexion si pas authentifié
+  if (!auth) {
+    return <Login onLogin={handleLogin} />;
+  }
 
   return (
     <div className="app-container">
@@ -75,12 +131,14 @@ function App() {
 
       <div className="main-container">
         <div className="header-section">
-          <h1 className="main-title fade-in text-center text-sm-start">
-            <span className="d-none d-md-inline" style={{marginRight: '0.5rem'}}>🚀</span>
-            <span className="d-inline d-md-none" style={{marginRight: '0.3rem', fontSize: '1.2rem'}}>🚀</span>
-            <span className="d-none d-sm-inline">Bienvenue, administrateur !</span>
-            <span className="d-sm-none">Admin</span>
-          </h1>
+          <div className="text-center">
+            <h1 className="main-title fade-in mb-0">
+              <span className="d-none d-md-inline" style={{marginRight: '0.5rem'}}>🚀</span>
+              <span className="d-inline d-md-none" style={{marginRight: '0.3rem', fontSize: '1.2rem'}}>🚀</span>
+              <span className="d-none d-sm-inline">Bienvenue, administrateur !</span>
+              <span className="d-sm-none">Admin</span>
+            </h1>
+          </div>
         </div>
 
         <div className="content-section">
@@ -106,6 +164,50 @@ function App() {
 
         </div>
       </div>
+
+      {/* FOOTER */}
+      <footer className="app-footer">
+        <div className="footer-content">
+          <div className="footer-section">
+            <div className="footer-info">
+              <span className="footer-text">
+                <i className="bi bi-shield-check-fill footer-icon"></i>
+                <span className="footer-status">
+                  <strong>ADMIN</strong> Connecté
+                </span>
+              </span>
+            </div>
+          </div>
+
+          <div className="footer-section">
+            <div className="footer-actions">
+              <div className="footer-description">
+                <small className="text-light opacity-75">
+                  <i className="bi bi-shield-check me-1"></i>
+                  Session administrateur active
+                </small>
+              </div>
+              <div className="footer-buttons">
+                <button
+                  onClick={() => {
+                    if (window.confirm('🔒 Êtes-vous sûr de vouloir vous déconnecter ?\n\nCette action vous redirigera vers la page de connexion.')) {
+                      handleLogout();
+                    }
+                  }}
+                  className="btn btn-danger btn-sm footer-btn"
+                  title="Se déconnecter de l'application"
+                >
+                  <i className="bi bi-box-arrow-right me-2"></i>
+                  <span className="d-none d-sm-inline">Déconnexion</span>
+                  <span className="d-sm-none">
+                    <i className="bi bi-power"></i>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

@@ -3328,22 +3328,7 @@
   transform: translateY(-2px) scale(1.07);
   box-shadow: 0 6px 24px #10b98155;
 }
-.catalogue-btn-nav {
-  background: linear-gradient(90deg, #6366f1 0%, #38bdf8 100%);
-  color: #fff;
-  border-radius: 14px;
-  border: none;
-  box-shadow: 0 2px 8px #6366f133;
-  transition: transform 0.13s, box-shadow 0.18s, background 0.18s;
-  font-size: 1.01rem;
-  padding: 0.38rem 1.1rem;
-  font-weight: 600;
-}
-.catalogue-btn-nav:hover {
-  background: linear-gradient(90deg, #38bdf8 0%, #6366f1 100%);
-  transform: translateY(-2px) scale(1.07);
-  box-shadow: 0 6px 24px #6366f155;
-}
+/* CSS des boutons de navigation du catalogue supprimé - Plus utilisé */
 
 /* CLIENTS */
 .client-btn-view {

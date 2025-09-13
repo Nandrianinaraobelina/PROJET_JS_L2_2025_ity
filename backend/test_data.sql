@@ -37,3 +37,8 @@ SELECT CONCAT('✅ Prix de ', ROW_COUNT(), ' films mis à jour à 500 Ariary!') 
 
 -- Vérifier les prix mis à jour
 SELECT ID_PROD, Titre, Prix_unitaire FROM PRODUIT ORDER BY Titre;
+
+-- Insérer un utilisateur administrateur de test
+-- Mot de passe: admin123 (hashé avec bcrypt)
+INSERT INTO UTILISATEURS (Username, Email, Password, Role) VALUES
+('admin', 'admin@site.com', '$2b$10$1mga9yLPyrzu/Mx5CWhtq.ShiNANOGDfpy8Jy9Tpmqu8y8cYUZASm', 'admin');

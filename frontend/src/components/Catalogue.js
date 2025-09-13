@@ -823,12 +823,16 @@ function Catalogue({ setActiveTab, onFilmsSelected }) {
         </div>
       )}
 
-      {/* PAGINATION + CATALOGUE FILMS */}
-      <div className="d-flex justify-content-between align-items-center mb-2">
-        <button className="btn catalogue-btn-nav" onClick={() => setPage(page-1)} disabled={page === 1}><i className="bi bi-arrow-left"></i> Précédent</button>
-        <span className="fw-bold">Page {page}</span>
-        <button className="btn catalogue-btn-nav" onClick={() => setPage(page+1)} disabled={page * itemsPerPage >= filteredProducts.length}>Suivant <i className="bi bi-arrow-right"></i></button>
+      {/* INDICATION DE PAGE */}
+      <div className="d-flex justify-content-center mb-3">
+        <div className="text-muted">
+          <small>
+            Page {page} sur {Math.ceil(filteredProducts.length / itemsPerPage) || 1}
+            {filteredProducts.length > 0 && ` (${filteredProducts.length} film${filteredProducts.length > 1 ? 's' : ''})`}
+          </small>
+        </div>
       </div>
+
       <div className="row">
         {filteredProducts.length > 0 ? (
           filteredProducts.slice((page-1)*itemsPerPage, page*itemsPerPage).map(product => {

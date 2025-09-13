@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
+const authenticateToken = require('./middleware/auth');
 require('dotenv').config();
 const clientRoutes = require('./routes/client.routes');
 const produitRoutes = require('./routes/produit.routes');
@@ -35,17 +36,20 @@ db.connect((err) => {
   }
 });
 
-// Endpoint de test
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'API opérationnelle !' });
+// Endpoint de test (protégé)
+app.get('/api/test', authenticateToken, (req, res) => {
+  res.json({ message: 'API opérationnelle ! Utilisateur authentifié.' });
 });
 
-app.use('/api/clients', clientRoutes(db));
-app.use('/api/produits', produitRoutes(db));
+// Routes publiques (pas besoin d'authentification)
 app.use('/api/auth', authRoutes(db));
-app.use('/api/vendeurs', vendeurRoutes(db));
-app.use('/api/ventes', venteProduitRoutes(db));
-app.use('/api/achats', acheterRoutes(db)); // <-- AJOUT pour activer /api/achats
+
+// Middleware d'authentification pour toutes les autres routes
+app.use('/api/clients', authenticateToken, clientRoutes(db));
+app.use('/api/produits', authenticateToken, produitRoutes(db));
+app.use('/api/vendeurs', authenticateToken, vendeurRoutes(db));
+app.use('/api/ventes', authenticateToken, venteProduitRoutes(db));
+app.use('/api/achats', authenticateToken, acheterRoutes(db)); // <-- AJOUT pour activer /api/achats
 
 app.listen(PORT, () => {
   console.log(`Serveur backend démarré sur http://localhost:${PORT}`);
