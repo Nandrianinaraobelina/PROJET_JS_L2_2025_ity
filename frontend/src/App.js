@@ -9,6 +9,7 @@ import Dashboard from "./components/Dashboard";
 import Achats from "./components/Achats";
 import Ventes from "./components/Ventes";
 import Catalogue from "./components/Catalogue";
+import Admin from "./components/Admin";
 function App() {
   const [auth, setAuth] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -160,6 +161,7 @@ function App() {
               "achats",
               "ventes",
               "catalogue",
+              "admin",
             ]}
           />
         </div>
@@ -209,6 +211,7 @@ function App() {
               onFilmsSelected={handleFilmsSelected}
             />
           )}
+          {activeTab === "admin" && <Admin />}
         </div>
       </div>
 
