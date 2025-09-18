@@ -4,7 +4,7 @@ import { getProducts } from "../services/productService";
 import { getVendors } from "../services/vendorService";
 import { getSales } from "../services/saleService";
 import { getPurchases } from "../services/purchaseService";
-import { Bar, Line, Pie } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,7 +13,6 @@ import {
   Title,
   Tooltip,
   Legend,
-  ArcElement,
   PointElement,
   LineElement,
 } from "chart.js";
@@ -24,7 +23,6 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ArcElement,
   PointElement,
   LineElement
 );
@@ -36,10 +34,6 @@ function Dashboard() {
   const [genres, setGenres] = useState({});
   const [evoVentes, setEvoVentes] = useState({ labels: [], data: [] });
   const [topVendeurs, setTopVendeurs] = useState([]);
-  const [repartitionFilms, setRepartitionFilms] = useState({
-    labels: [],
-    data: [],
-  });
   const [totalFilmsVendus, setTotalFilmsVendus] = useState(0);
   const [totalFilmsVendusAllTime, setTotalFilmsVendusAllTime] = useState(0);
   const [showAllTimeStats, setShowAllTimeStats] = useState(false);
@@ -148,20 +142,6 @@ function Dashboard() {
           .sort((a, b) => b.count - a.count)
           .slice(0, 5);
         setTopVendeurs(top);
-
-        // Répartition des ventes par film
-        const filmCount = {};
-        ventes.forEach((v) => {
-          filmCount[v.ID_PROD] = (filmCount[v.ID_PROD] || 0) + 1;
-        });
-        setRepartitionFilms({
-          labels: Object.keys(filmCount).map(
-            (id) =>
-              (films.find((f) => f.ID_PROD === Number(id)) || {}).Titre ||
-              "Inconnu"
-          ),
-          data: Object.values(filmCount),
-        });
       } catch (error) {
         console.error("❌ Erreur lors du chargement des statistiques:", error);
         // Optionnel: afficher un message d'erreur à l'utilisateur
@@ -448,64 +428,6 @@ function Dashboard() {
                         color: "rgba(0,0,0,0.05)",
                       },
                     },
-                  },
-                }}
-                height={140}
-              />
-            </div>
-          </div>
-        )}
-        {repartitionFilms.labels.length > 0 && (
-          <div className="col-12 col-md-6 col-lg-4">
-            <div className="section-card-modern">
-              <h6
-                className="section-title-modern"
-                style={{ fontSize: "1.2rem", marginBottom: "1.5rem" }}
-              >
-                Répartition des ventes par film
-              </h6>
-              <Pie
-                data={{
-                  labels: repartitionFilms.labels,
-                  datasets: [
-                    {
-                      label: "Ventes",
-                      data: repartitionFilms.data,
-                      backgroundColor: [
-                        "rgba(102, 126, 234, 0.8)",
-                        "rgba(240, 147, 251, 0.8)",
-                        "rgba(79, 172, 254, 0.8)",
-                        "rgba(67, 233, 123, 0.8)",
-                        "rgba(245, 87, 108, 0.8)",
-                        "rgba(251, 191, 36, 0.8)",
-                        "rgba(16, 185, 129, 0.8)",
-                        "rgba(139, 92, 246, 0.8)",
-                      ],
-                      borderColor: [
-                        "rgba(102, 126, 234, 1)",
-                        "rgba(240, 147, 251, 1)",
-                        "rgba(79, 172, 254, 1)",
-                        "rgba(67, 233, 123, 1)",
-                        "rgba(245, 87, 108, 1)",
-                        "rgba(251, 191, 36, 1)",
-                        "rgba(16, 185, 129, 1)",
-                        "rgba(139, 92, 246, 1)",
-                      ],
-                      borderWidth: 2,
-                    },
-                  ],
-                }}
-                options={{
-                  responsive: true,
-                  plugins: {
-                    legend: {
-                      position: "bottom",
-                      labels: {
-                        padding: 20,
-                        usePointStyle: true,
-                      },
-                    },
-                    title: { display: false },
                   },
                 }}
                 height={140}

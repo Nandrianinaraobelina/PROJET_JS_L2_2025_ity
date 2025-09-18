@@ -1,5 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { getProducts, addProduct, updateProduct, deleteProduct } from '../services/productService';
+import React, { useEffect, useState } from "react";
+import {
+  getProducts,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+} from "../services/productService";
 
 function validatePrice(price) {
   return !isNaN(price) && Number(price) >= 0;
@@ -14,26 +19,25 @@ function Products() {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
-    Titre: '',
-    Realisateur: '',
-    DateSortie: '',
-    Duree: '',
-    Prix_unitaire: '',
-    Genre: '',
-    Langue: '',
-    PaysOrigine: '',
-    ActeursPrincipaux: '',
-    Photo: '',
+    Titre: "",
+    Realisateur: "",
+    DateSortie: "",
+    Duree: "",
+    Prix_unitaire: "",
+    Genre: "",
+    Langue: "",
+    PaysOrigine: "",
+    ActeursPrincipaux: "",
+    Photo: "",
   });
-  const [formError, setFormError] = useState('');
+  const [formError, setFormError] = useState("");
   const [formLoading, setFormLoading] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-
 
   useEffect(() => {
     fetchProducts();
@@ -41,7 +45,7 @@ function Products() {
 
   const fetchProducts = async () => {
     setLoading(true);
-    setError('');
+    setError("");
     try {
       const data = await getProducts();
       setProducts(data);
@@ -55,10 +59,19 @@ function Products() {
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     let valid = true;
-    let error = '';
-    if (["Titre", "Realisateur", "Genre", "Langue", "PaysOrigine", "ActeursPrincipaux"].includes(name)) {
+    let error = "";
+    if (
+      [
+        "Titre",
+        "Realisateur",
+        "Genre",
+        "Langue",
+        "PaysOrigine",
+        "ActeursPrincipaux",
+      ].includes(name)
+    ) {
       valid = isAlpha(value);
-      if (!valid) error = 'Seules les lettres sont autorisées';
+      if (!valid) error = "Seules les lettres sont autorisées";
     }
     // La logique pour type='file' a été enlevée car Photo est maintenant un champ texte
     // pour entrer le chemin de l'image, ex: /images/mon_film.jpg
@@ -66,19 +79,19 @@ function Products() {
       setFormError(error);
       return;
     }
-    setFormError('');
+    setFormError("");
     setForm({ ...form, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormError('');
+    setFormError("");
     if (!form.Titre) {
-      setFormError('Le titre est obligatoire');
+      setFormError("Le titre est obligatoire");
       return;
     }
     if (!validatePrice(form.Prix_unitaire)) {
-      setFormError('Le prix doit être un nombre positif');
+      setFormError("Le prix doit être un nombre positif");
       return;
     }
     setFormLoading(true);
@@ -90,15 +103,26 @@ function Products() {
       } else {
         formData = new FormData();
         Object.entries(form).forEach(([key, value]) => {
-          if (key === 'Photo' && value instanceof File) {
-            formData.append('Photo', value);
+          if (key === "Photo" && value instanceof File) {
+            formData.append("Photo", value);
           } else {
             formData.append(key, value);
           }
         });
         await addProduct(formData);
       }
-      setForm({ Titre: '', Realisateur: '', DateSortie: '', Duree: '', Prix_unitaire: '', Genre: '', Langue: '', PaysOrigine: '', ActeursPrincipaux: '', Photo: '' });
+      setForm({
+        Titre: "",
+        Realisateur: "",
+        DateSortie: "",
+        Duree: "",
+        Prix_unitaire: "",
+        Genre: "",
+        Langue: "",
+        PaysOrigine: "",
+        ActeursPrincipaux: "",
+        Photo: "",
+      });
       setEditId(null);
       fetchProducts();
     } catch (err) {
@@ -108,25 +132,24 @@ function Products() {
     }
   };
 
-
   const handleEdit = (prod) => {
     setForm({
       Titre: prod.Titre,
-      Realisateur: prod.Realisateur || '',
-      DateSortie: prod.DateSortie ? prod.DateSortie.substring(0, 10) : '',
-      Duree: prod.Duree || '',
+      Realisateur: prod.Realisateur || "",
+      DateSortie: prod.DateSortie ? prod.DateSortie.substring(0, 10) : "",
+      Duree: prod.Duree || "",
       Prix_unitaire: prod.Prix_unitaire,
-      Genre: prod.Genre || '',
-      Langue: prod.Langue || '',
-      PaysOrigine: prod.PaysOrigine || '',
-      ActeursPrincipaux: prod.ActeursPrincipaux || '',
-      Photo: prod.Photo || '',
+      Genre: prod.Genre || "",
+      Langue: prod.Langue || "",
+      PaysOrigine: prod.PaysOrigine || "",
+      ActeursPrincipaux: prod.ActeursPrincipaux || "",
+      Photo: prod.Photo || "",
     });
     setEditId(prod.ID_PROD);
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Supprimer ce film ?')) {
+    if (window.confirm("Supprimer ce film ?")) {
       try {
         await deleteProduct(id);
         fetchProducts();
@@ -137,35 +160,64 @@ function Products() {
   };
 
   const handleCancelEdit = () => {
-    setForm({ Titre: '', Realisateur: '', DateSortie: '', Duree: '', Prix_unitaire: '', Genre: '', Langue: '', PaysOrigine: '', ActeursPrincipaux: '', Photo: '' });
+    setForm({
+      Titre: "",
+      Realisateur: "",
+      DateSortie: "",
+      Duree: "",
+      Prix_unitaire: "",
+      Genre: "",
+      Langue: "",
+      PaysOrigine: "",
+      ActeursPrincipaux: "",
+      Photo: "",
+    });
     setEditId(null);
-    setFormError('');
+    setFormError("");
   };
 
-  const filteredProducts = products.filter(prod =>
-    prod.Titre.toLowerCase().includes(search.toLowerCase()) ||
-    (prod.Realisateur || '').toLowerCase().includes(search.toLowerCase()) ||
-    (prod.Genre || '').toLowerCase().includes(search.toLowerCase())
+  const filteredProducts = products.filter(
+    (prod) =>
+      prod.Titre.toLowerCase().includes(search.toLowerCase()) ||
+      (prod.Realisateur || "").toLowerCase().includes(search.toLowerCase()) ||
+      (prod.Genre || "").toLowerCase().includes(search.toLowerCase())
   );
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const paginatedProducts = filteredProducts.slice((currentPage-1)*itemsPerPage, currentPage*itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <div className="section-card-modern fade-in">
-      <div className="d-flex justify-content-between align-items-center mb-6" style={{marginBottom: '2rem'}}>
+      <div
+        className="d-flex justify-content-between align-items-center mb-6"
+        style={{ marginBottom: "2rem" }}
+      >
         <h2 className="section-title-modern">
-          <i className="bi bi-film" style={{marginRight: '0.5rem'}}></i>
+          <i className="bi bi-film" style={{ marginRight: "0.5rem" }}></i>
           Gestion des Produits
-          <span className="badge bg-primary" style={{marginLeft: '1rem', fontSize: '0.8rem'}}>{products.length}</span>
+          <span
+            className="badge bg-primary"
+            style={{ marginLeft: "1rem", fontSize: "0.8rem" }}
+          >
+            {products.length}
+          </span>
         </h2>
-        <div className="search-container-modern" style={{maxWidth: '300px', marginBottom: '0'}}>
-        <input
-          type="text"
+        <div
+          className="search-container-modern"
+          style={{ maxWidth: "300px", marginBottom: "0" }}
+        >
+          <input
+            type="text"
             className="search-input-modern"
             placeholder="Rechercher un produit..."
-          value={search}
-          onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
-        />
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
           <div className="search-icon-modern">
             <i className="bi bi-search"></i>
           </div>
@@ -173,7 +225,11 @@ function Products() {
       </div>
 
       {/* Formulaire d'ajout/modification */}
-      <form className="row g-3 mb-6 fade-in" style={{marginBottom: '2rem'}} onSubmit={handleSubmit}>
+      <form
+        className="row g-3 mb-6 fade-in"
+        style={{ marginBottom: "2rem" }}
+        onSubmit={handleSubmit}
+      >
         <div className="col-md-3">
           <div className="form-group-modern">
             <label className="form-label-modern">Titre</label>
@@ -300,33 +356,45 @@ function Products() {
               className="form-input-modern"
               name="Photo"
               accept="image/*"
-              onChange={e => {
-  const file = e.target.files[0];
-  if (file) {
-    setForm({ ...form, Photo: file });
-  }
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  setForm({ ...form, Photo: file });
+                }
               }}
-              style={{padding: '0.5rem'}}
+              style={{ padding: "0.5rem" }}
             />
           </div>
         </div>
         <div className="col-12">
           <div className="d-flex gap-3">
-                        <button
+            <button
               type="submit"
-              className={`btn-success-modern flex-fill ${formLoading ? 'btn-loading' : ''}`}
+              className={`btn-success-modern flex-fill ${
+                formLoading ? "btn-loading" : ""
+              }`}
               disabled={formLoading}
-              style={{maxWidth: '200px'}}
+              style={{ maxWidth: "200px" }}
             >
               {formLoading ? (
                 <>
-                  <div className="spinner-modern" style={{width: '1rem', height: '1rem', marginRight: '0.5rem'}}></div>
-                  {editId ? 'Modification...' : 'Ajout...'}
+                  <div
+                    className="spinner-modern"
+                    style={{
+                      width: "1rem",
+                      height: "1rem",
+                      marginRight: "0.5rem",
+                    }}
+                  ></div>
+                  {editId ? "Modification..." : "Ajout..."}
                 </>
               ) : (
                 <>
-                  <i className="bi bi-film" style={{marginRight: '0.5rem'}}></i>
-                  {editId ? 'Modifier le film' : 'Ajouter le film'}
+                  <i
+                    className="bi bi-film"
+                    style={{ marginRight: "0.5rem" }}
+                  ></i>
+                  {editId ? "Modifier le film" : "Ajouter le film"}
                 </>
               )}
             </button>
@@ -335,19 +403,25 @@ function Products() {
                 type="button"
                 className="btn-ghost-modern"
                 onClick={handleCancelEdit}
-                style={{maxWidth: '120px'}}
+                style={{ maxWidth: "120px" }}
               >
-                <i className="bi bi-x-circle" style={{marginRight: '0.5rem'}}></i>
+                <i
+                  className="bi bi-x-circle"
+                  style={{ marginRight: "0.5rem" }}
+                ></i>
                 Annuler
-          </button>
+              </button>
             )}
           </div>
           {formError && (
-            <div className="mt-3 p-3 border-radius-lg" style={{
-              background: 'var(--error-50)',
-              border: '1px solid var(--error-200)',
-              color: 'var(--error-700)'
-            }}>
+            <div
+              className="mt-3 p-3 border-radius-lg"
+              style={{
+                background: "var(--error-50)",
+                border: "1px solid var(--error-200)",
+                color: "var(--error-700)",
+              }}
+            >
               <div className="d-flex align-items-center">
                 <i className="bi bi-exclamation-triangle me-2"></i>
                 <span>{formError}</span>
@@ -362,13 +436,19 @@ function Products() {
           <span className="text-muted">Chargement des produits...</span>
         </div>
       ) : error ? (
-        <div className="p-4 border-radius-lg" style={{
-          background: 'var(--error-50)',
-          border: '1px solid var(--error-200)',
-          color: 'var(--error-700)'
-        }}>
+        <div
+          className="p-4 border-radius-lg"
+          style={{
+            background: "var(--error-50)",
+            border: "1px solid var(--error-200)",
+            color: "var(--error-700)",
+          }}
+        >
           <div className="d-flex align-items-center">
-            <i className="bi bi-exclamation-triangle me-3" style={{fontSize: '1.5rem'}}></i>
+            <i
+              className="bi bi-exclamation-triangle me-3"
+              style={{ fontSize: "1.5rem" }}
+            ></i>
             <div>
               <div className="font-semibold">Erreur de chargement</div>
               <div>{error}</div>
@@ -378,23 +458,36 @@ function Products() {
       ) : (
         <React.Fragment>
           {/* Table moderne des produits */}
-          <div className="section-card-modern fade-in" style={{padding: '0', marginTop: '2rem'}}>
-            <div className="p-4 border-bottom" style={{borderColor: 'var(--neutral-200) !important'}}>
-              <h6 className="font-semibold mb-0" style={{color: 'var(--neutral-700)'}}>
-                Liste des produits ({paginatedProducts.length} sur {filteredProducts.length})
+          <div
+            className="section-card-modern fade-in"
+            style={{ padding: "0", marginTop: "2rem" }}
+          >
+            <div
+              className="p-4 border-bottom"
+              style={{ borderColor: "var(--neutral-200) !important" }}
+            >
+              <h6
+                className="font-semibold mb-0"
+                style={{ color: "var(--neutral-700)" }}
+              >
+                Liste des produits ({paginatedProducts.length} sur{" "}
+                {filteredProducts.length})
               </h6>
             </div>
 
             {/* En-têtes de la table */}
-            <div className="d-none d-md-flex p-3 border-bottom" style={{
-              background: 'var(--neutral-50)',
-              borderColor: 'var(--neutral-200) !important',
-              fontWeight: '600',
-              fontSize: '0.875rem',
-              color: 'var(--neutral-600)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em'
-            }}>
+            <div
+              className="d-none d-md-flex p-3 border-bottom"
+              style={{
+                background: "var(--neutral-50)",
+                borderColor: "var(--neutral-200) !important",
+                fontWeight: "600",
+                fontSize: "0.875rem",
+                color: "var(--neutral-600)",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+              }}
+            >
               <div className="col-1">ID</div>
               <div className="col-2">Titre</div>
               <div className="col-2">Réalisateur</div>
@@ -409,52 +502,66 @@ function Products() {
             <div className="p-0">
               {paginatedProducts.length === 0 ? (
                 <div className="text-center p-6">
-                  <i className="bi bi-film" style={{fontSize: '3rem', color: 'var(--neutral-400)'}}></i>
+                  <i
+                    className="bi bi-film"
+                    style={{ fontSize: "3rem", color: "var(--neutral-400)" }}
+                  ></i>
                   <div className="mt-3 text-muted">Aucun produit trouvé</div>
                   <div className="text-sm text-muted mt-1">
-                    {search ? 'Essayez de modifier votre recherche' : 'Commencez par ajouter un produit'}
+                    {search
+                      ? "Essayez de modifier votre recherche"
+                      : "Commencez par ajouter un produit"}
                   </div>
                 </div>
               ) : (
                 paginatedProducts.map((prod, index) => (
                   <div
                     key={prod.ID_PROD}
-                    className={`d-flex align-items-center p-3 border-bottom hover-lift ${index % 2 === 0 ? '' : ''}`}
+                    className={`d-flex align-items-center p-3 border-bottom hover-lift ${
+                      index % 2 === 0 ? "" : ""
+                    }`}
                     style={{
-                      borderColor: 'var(--neutral-200) !important',
-                      transition: 'all var(--duration-normal) var(--easing)',
-                      background: index % 2 === 0 ? 'transparent' : 'var(--neutral-50)'
+                      borderColor: "var(--neutral-200) !important",
+                      transition: "all var(--duration-normal) var(--easing)",
+                      background:
+                        index % 2 === 0 ? "transparent" : "var(--neutral-50)",
                     }}
                   >
                     {/* Version mobile - Carte */}
                     <div className="d-md-none w-100">
-                      <div className="d-flex justify-content-between align-items-start mb-2">
-                        <div>
-                          <div className="font-semibold text-primary">{prod.Titre}</div>
-                          <div className="text-sm text-muted">
-                            {prod.Realisateur && `Par ${prod.Realisateur}`}
-                            {prod.DateSortie && ` • ${prod.DateSortie.substring(0, 4)}`}
-                          </div>
-                          <div className="text-sm font-semibold" style={{color: 'var(--success-600)'}}>
-                            {prod.Prix_unitaire} ARIARY
-                          </div>
+                      <div className="mb-2">
+                        <div className="font-semibold text-primary mb-1">
+                          {prod.Titre}
                         </div>
-                        <div className="d-flex gap-1">
+                        <div className="text-sm text-muted mb-1">
+                          {prod.Realisateur && `Par ${prod.Realisateur}`}
+                          {prod.DateSortie &&
+                            ` • ${prod.DateSortie.substring(0, 4)}`}
+                        </div>
+                        <div
+                          className="text-sm font-semibold mb-2"
+                          style={{ color: "var(--success-600)" }}
+                        >
+                          {prod.Prix_unitaire} ARIARY
+                        </div>
+                        <div className="d-flex gap-1 justify-content-end">
                           <button
-                            className="btn-icon-modern btn-bounce"
+                            className="btn btn-sm btn-outline-warning btn-modern btn-compact"
                             onClick={() => handleEdit(prod)}
                             title="Modifier"
-                            style={{background: 'var(--warning-50)', color: 'var(--warning-600)', borderColor: 'var(--warning-200)'}}
                           >
                             <i className="bi bi-pencil"></i>
+                            <span className="d-none d-sm-inline ms-1">
+                              Edit
+                            </span>
                           </button>
                           <button
-                            className="btn-icon-modern btn-bounce"
+                            className="btn btn-sm btn-outline-danger btn-modern btn-compact"
                             onClick={() => handleDelete(prod.ID_PROD)}
                             title="Supprimer"
-                            style={{background: 'var(--error-50)', color: 'var(--error-600)', borderColor: 'var(--error-200)'}}
                           >
                             <i className="bi bi-trash"></i>
+                            <span className="d-none d-sm-inline ms-1">Del</span>
                           </button>
                         </div>
                       </div>
@@ -476,25 +583,43 @@ function Products() {
 
                     {/* Version desktop - Ligne de table */}
                     <div className="d-none d-md-flex w-100 align-items-center">
-                      <div className="col-1 text-muted font-mono" style={{fontSize: '0.875rem'}}>
+                      <div
+                        className="col-1 text-muted font-mono"
+                        style={{ fontSize: "0.875rem" }}
+                      >
                         #{prod.ID_PROD}
                       </div>
                       <div className="col-2">
                         <div className="font-semibold">{prod.Titre}</div>
                         {prod.Realisateur && (
-                          <div className="text-sm text-muted">{prod.Realisateur}</div>
+                          <div className="text-sm text-muted">
+                            {prod.Realisateur}
+                          </div>
                         )}
                       </div>
                       <div className="col-2 text-sm">
-                        {prod.Realisateur || <span className="text-muted">—</span>}
+                        {prod.Realisateur || (
+                          <span className="text-muted">—</span>
+                        )}
                       </div>
                       <div className="col-1 text-sm">
-                        {prod.DateSortie ? prod.DateSortie.substring(0, 4) : <span className="text-muted">—</span>}
+                        {prod.DateSortie ? (
+                          prod.DateSortie.substring(0, 4)
+                        ) : (
+                          <span className="text-muted">—</span>
+                        )}
                       </div>
                       <div className="col-1 text-sm">
-                        {prod.Duree ? `${prod.Duree}min` : <span className="text-muted">—</span>}
+                        {prod.Duree ? (
+                          `${prod.Duree}min`
+                        ) : (
+                          <span className="text-muted">—</span>
+                        )}
                       </div>
-                      <div className="col-1 font-semibold" style={{color: 'var(--success-600)'}}>
+                      <div
+                        className="col-1 font-semibold"
+                        style={{ color: "var(--success-600)" }}
+                      >
                         {prod.Prix_unitaire}
                       </div>
                       <div className="col-2 text-sm">
@@ -503,20 +628,20 @@ function Products() {
                       <div className="col-2">
                         <div className="d-flex gap-1 justify-content-center">
                           <button
-                            className="btn-icon-modern btn-bounce"
+                            className="btn btn-sm btn-outline-warning btn-modern btn-compact"
                             onClick={() => handleEdit(prod)}
                             title="Modifier"
-                            style={{background: 'var(--warning-50)', color: 'var(--warning-600)', borderColor: 'var(--warning-200)'}}
                           >
                             <i className="bi bi-pencil"></i>
+                            <span className="ms-1">Edit</span>
                           </button>
                           <button
-                            className="btn-icon-modern btn-bounce"
+                            className="btn btn-sm btn-outline-danger btn-modern btn-compact"
                             onClick={() => handleDelete(prod.ID_PROD)}
                             title="Supprimer"
-                            style={{background: 'var(--error-50)', color: 'var(--error-600)', borderColor: 'var(--error-200)'}}
                           >
                             <i className="bi bi-trash"></i>
+                            <span className="ms-1">Del</span>
                           </button>
                         </div>
                       </div>
@@ -524,7 +649,7 @@ function Products() {
                   </div>
                 ))
               )}
-</div>
+            </div>
           </div>
 
           {/* Pagination moderne */}
@@ -534,23 +659,26 @@ function Products() {
                 <button
                   className="btn-icon-modern"
                   disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(currentPage-1)}
+                  onClick={() => setCurrentPage(currentPage - 1)}
                   title="Page précédente"
                 >
                   <i className="bi bi-chevron-left"></i>
                 </button>
-                <span className="text-sm font-semibold px-3 py-2 border-radius-lg" style={{
-                  background: 'var(--neutral-100)',
-                  color: 'var(--neutral-700)',
-                  minWidth: '80px',
-                  textAlign: 'center'
-                }}>
+                <span
+                  className="text-sm font-semibold px-3 py-2 border-radius-lg"
+                  style={{
+                    background: "var(--neutral-100)",
+                    color: "var(--neutral-700)",
+                    minWidth: "80px",
+                    textAlign: "center",
+                  }}
+                >
                   {currentPage} / {totalPages || 1}
                 </span>
                 <button
                   className="btn-icon-modern"
                   disabled={currentPage === totalPages || totalPages === 0}
-                  onClick={() => setCurrentPage(currentPage+1)}
+                  onClick={() => setCurrentPage(currentPage + 1)}
                   title="Page suivante"
                 >
                   <i className="bi bi-chevron-right"></i>
@@ -564,4 +692,4 @@ function Products() {
   );
 }
 
-export default Products; 
+export default Products;
