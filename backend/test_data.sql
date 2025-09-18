@@ -35,10 +35,29 @@ UPDATE PRODUIT SET Prix_unitaire = 500;
 
 SELECT CONCAT('✅ Prix de ', ROW_COUNT(), ' films mis à jour à 500 Ariary!') as Message;
 
--- Vérifier les prix mis à jour
-SELECT ID_PROD, Titre, Prix_unitaire FROM PRODUIT ORDER BY Titre;
 
--- Insérer un utilisateur administrateur de test
--- Mot de passe: admin123 (hashé avec bcrypt)
-INSERT INTO UTILISATEURS (Username, Email, Password, Role) VALUES
-('admin', 'admin@site.com', '$2b$10$1mga9yLPyrzu/Mx5CWhtq.ShiNANOGDfpy8Jy9Tpmqu8y8cYUZASm', 'admin');
+-- Insérer des ventes de test
+INSERT INTO VENTE_PRODUIT (ID_PROD, ID_VENDEUR, DateVente) VALUES
+(1, 1, '2024-12-01 10:30:00'),
+(2, 1, '2024-12-02 14:15:00'),
+(3, 2, '2024-12-03 09:45:00'),
+(4, 2, '2024-12-04 16:20:00'),
+(5, 3, '2024-12-05 11:10:00'),
+(1, 3, '2024-12-06 13:30:00'),
+(6, 4, '2024-12-07 15:45:00'),
+(7, 4, '2024-12-08 12:00:00'),
+(8, 5, '2024-12-09 17:15:00'),
+(9, 5, '2024-12-10 10:30:00');
+
+-- Insérer des achats de test
+INSERT INTO ACHETER (ID_CLIENT, ID_PROD, DateAchat, Prix_unitaire, Quantite) VALUES
+(1, 1, '2024-12-01 10:30:00', 500, 1),
+(2, 2, '2024-12-02 14:15:00', 500, 1),
+(3, 3, '2024-12-03 09:45:00', 500, 2),
+(4, 4, '2024-12-04 16:20:00', 500, 1),
+(5, 5, '2024-12-05 11:10:00', 500, 1),
+(1, 6, '2024-12-06 13:30:00', 500, 1),
+(2, 7, '2024-12-07 15:45:00', 500, 1),
+(3, 8, '2024-12-08 12:00:00', 500, 1),
+(4, 9, '2024-12-09 17:15:00', 500, 1),
+(5, 10, '2024-12-10 10:30:00', 500, 1);
